@@ -33,7 +33,7 @@ class Scalar extends BufferFloats {
     }
     // Creates a new Scalar equal to this one
     clone() {return new Scalar(this.a[0]);}
-    // Returns inner value
+    // JS type conversion
     valueOf() {return this.a[0];}
     toString() {return this.a[0].toString();}
     // Assigns a value, taking a JS Number instead of a Scalar like Eq would.
@@ -46,64 +46,6 @@ class Scalar extends BufferFloats {
     }
     zeroeq() {return Scalar.Zero(this);}
     zero() {return this.clone().zeroeq();} // Redundant but here for completeness
-    
-    /** Operations (Unary) **/    
-    // Absolute value (L1 norm)
-    static Abs(out,x) {
-        out.a[0] = Math.abs(x.a[0]);
-        return out;
-    }
-    abseq() {return Scalar.Abs(this,this);}
-    abs() {return this.clone().abseq();}    
-    
-    // Squaring (L2 norm)
-    static Sq(out,x) {
-        out.a[0] = x.a[0]*x.a[0];
-        return out;
-    }
-    sqeq() {return Scalar.Sq(this,this);}
-    sq() {return this.clone().sqeq();}
-    
-    // Square root
-    static Sqrt(out,x) {
-        out.a[0] = Math.sqrt(x.a[0]);
-        return out;
-    }
-    sqrteq() {return Scalar.Sqrt(this,this);}
-    sqrt() {return this.clone().sqrteq();}
-    
-    /** Operations (Binary) **/
-    // Addition
-    static Add(out,x,y) {
-        out.a[0] = x.a[0] + x.y[0];
-        return out;
-    }
-    addeq(x) {return Scalar.Add(this,this,x);}
-    add(x) {return this.clone().addeq(x);}
-    
-    // Subtraction
-    static Sub(out,x,y) {
-        out.a[0] = x.a[0] - x.y[0];
-        return out;
-    }
-    subeq(x) {return Scalar.Sub(this,this,x);}
-    sub(x) {return this.clone().subeq(x);}
-    
-    // Multiplication
-    static Mul(out,x,y) {
-        out.a[0] = x.a[0] * x.y[0];
-        return out;
-    }
-    muleq(x) {return Scalar.Mul(this,this,x);}
-    mul(x) {return this.clone().muleq(x);}
-    
-    // Division
-    static Div(out,x,y) {
-        out.a[0] = x.a[0] / x.y[0];
-        return out;
-    }
-    diveq(x) {return Scalar.Div(this,this,x);}
-    div(x) {return this.clone().diveq(x);}
 }
 /*
  * 2D Vector
@@ -122,7 +64,12 @@ class Vec extends BufferFloats {
         super(a);
     }
     // Creates a new Vector equal to this one
-    clone() {return new Vec(this.a[0],this.a[1]);}    
+    clone() {return new Vec(this.a[0],this.a[1]);}
+    // JS type conversion
+    valueOf() {return [this.a[0],this.a[1]];}
+    toString() {return this.valueOf().toString();}
+    // Assigns a value, but taking JS numbers instead of a Vec like Eq would.
+    set(x,y) {this.a[0]=x;this.a[1]=y;}
     
     /** Operations (Binary, Vector-Valued) **/
     // Scalar Multiplication
