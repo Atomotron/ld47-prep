@@ -21,18 +21,16 @@ class BufferFloats {
 /* f32 Scalar */
 class Scalar extends BufferFloats {
     /** Constructors **/
-    constructor() {
-        super(new Float32Array(1));
-    }
-    static From(x) {
-        let n = new Scalar();
-        n.a[0] = x; // Converts f64 to f32
-        return n;
+    constructor(x=0.0) {
+        let n = new Float32Array(1);
+        n[0] = x;
+        super(n);
     }
     // Creates a new Scalar equal to this one
     clone() {
         return (new Scalar()).eq(this);
     }
+    
     /** Operations (Constant) **/
     static Zero(out) {
         out.a[0] = 0;
@@ -102,14 +100,11 @@ class Scalar extends BufferFloats {
 
 class Vec extends BufferFloats {
     /** Constructors **/
-    constructor() {
-        super(new Float32Array(2));
-    }
-    static From(x,y) {
-        let n = new Scalar();
-        n.a[0] = x; // Converts f64 to f32
-        n.a[1] = y; // Converts f64 to f32
-        return n;
+    constructor(x=0.0,y=0.0) {
+        let a = new Float32Array(2);
+        a[0] = x; // Converts f64 to f32
+        a[1] = y; // Converts f64 to f32
+        super(a);
     }
     // Creates a new Vector equal to this one
     clone() {
