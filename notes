@@ -1,3 +1,23 @@
+# Wed 23 Sep 2020 05:08:33 PM CDT
+
+Things the engine needs to do:
+
+Input:
+- Mouse and keyboard status tracking
+- Mouse pos to screen coordinates
+- Sensible mouseup/mouseout handling
+
+Resources:
+- Image loading with resolution options
+- Sound
+- Callback for when fully loaded
+
+Sound:
+- Load with <audio> elements so that it works on-disk. (?)
+
+Display:
+- Resizable canvas with the right number of pixels and a program-fixed aspect ratio.
+
 # Tue 22 Sep 2020 07:45:38 PM CDT
 
 Ideas:
