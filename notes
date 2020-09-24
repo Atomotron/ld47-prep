@@ -1,6 +1,6 @@
 # Wed 23 Sep 2020 05:08:33 PM CDT
 
-Things the engine needs to do:
+## Things the engine needs to do:
 
 Input:
 - Mouse and keyboard status tracking
@@ -17,6 +17,13 @@ Sound:
 
 Display:
 - Resizable canvas with the right number of pixels and a program-fixed aspect ratio.
+
+## math32
+
+I spent a lot of time typing out the Scalar class, but we really want stack-allocated f32 to be the default.
+I am going to change Vec to work with stack numbers. Scalar will end up with mostly a storage role to play.
+I have profiled to check, and Firefox does actually benefit from Math.fround(). It seems to be able to do
+this across function boundaries (both arguments and return values.) 
 
 # Tue 22 Sep 2020 07:45:38 PM CDT
 
