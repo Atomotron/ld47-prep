@@ -190,7 +190,13 @@ class Vec extends BufferFloats {
 
 /*
  * Matrix class.
- * Represents an affine transformation in 2D, making it a 3D matrix.
+ * Represents an affine transformation in 2D. It's stored as a 3D matrix.
+ * However, its algebra is that of affine transformation operators.
+ * Supports:
+ *  - Addition, Subtraction, Scalar multiplication (Add, Sub, Mul)
+ *  - Vector transformation, Transformation composition (Transform, Compose)
+ *  - Determinant, Inverse (Det, Inv)
+ *
  * OpenGL matrix standard:
  *    [ a11 a21 a31   // Column 1
  *      a12 a22 a32   // Column 2
@@ -204,11 +210,11 @@ class Vec extends BufferFloats {
  *        3   4   5   // Column 2
  *        6   7   8 ] // Column 3
  * Letters for Wolfram Alpha. :-)
- *    [   a   c   0   // Column 1
- *        b   d   0   // Column 2
+ *    [   a   b   0   // Column 1
+ *        c   d   0   // Column 2
  *        x   y   1 ] // Column 3
  * But in wolfram you would write that as...
- *    { {a,b,x},{c,d,y},{0,0,1} }
+ *    { {a,c,x},{b,d,y},{0,0,1} }
  */
  class Mat extends BufferFloats {
     constructor(xx=1.0,xy=0.0, yx=0.0,yy=1.0, x=0.0,y=0.0) {
@@ -244,6 +250,55 @@ class Vec extends BufferFloats {
     muleq(y_scalar) {return Mat.Mul(this,this,y_scalar);}
     mul(y_scalar) {return this.clone().muleq(y_scalar);}
     
+    // Addition
+    static Add(out,x,y) {
+        let a = out.a; let b = x.a; let c = y.a;
+        a[0] = b[0]+c[0]; a[1] = b[1]+c[1];
+        a[3] = b[3]+c[3]; a[4] = b[4]+c[4];
+        a[6] = b[6]+c[6]; a[7] = b[7]+c[7];
+        return out;
+    }
+    addeq(x) {return Mat.Add(this,this,x);}
+    add(x) {return this.clone().addeq(x);}
+    
+    // Subtraction
+    static Sub(out,x,y) {
+        let a = out.a; let b = x.a; let c = y.a;
+        a[0] = b[0]-c[0]; a[1] = b[1]-c[1];
+        a[3] = b[3]-c[3]; a[4] = b[4]-c[4];
+        a[6] = b[6]-c[6]; a[7] = b[7]-c[7];
+        return out;
+    }
+    subeq(x) {return Mat.Sub(this,this,x);}
+    sub(x) {return this.clone().subeq(x);}
+    
+    // Matrix multiplication (transformation of composition)
+    static Compose(out,x,y) {
+        let a = out.a; let b = x.a; let c = y.a;
+        let a0 = Math.fround(b[0]*c[0])+Math.fround(b[3]*c[1]);
+        let a1 = Math.fround(b[1]*c[0])+Math.fround(b[4]*c[1]);
+        let a3 = Math.fround(b[0]*c[3])+Math.fround(b[3]*c[4]);
+        let a4 = Math.fround(b[1]*c[3])+Math.fround(b[4]*c[4]);
+        let a6 = Math.fround(Math.fround(b[0]*c[6])+Math.fround(b[3]*c[7]))+b[6];
+        let a7 = Math.fround(Math.fround(b[1]*c[6])+Math.fround(b[4]*c[7]))+b[7];
+        a[0]=a0;a[1]=a1;a[3]=a3;a[4]=a4;a[6]=a6;a[7]=a7;
+        return out;
+    }
+    composeq(x) {return Mat.Compose(this,this,x);}
+    compose(x) {return this.clone().composeq(x);}
+    
+    /** Operators (Binary, Vector-Valued) **/
+    static Transform(out_vec,matrix,vector) {
+        let b = out_vec.a; let A = matrix.a; let x = vector.a;
+        let b0 = Math.fround(Math.fround(A[0]*x[0]) + Math.fround(A[3]*x[1])) + A[6];
+        let b1 = Math.fround(Math.fround(A[1]*x[0]) + Math.fround(A[4]*x[1])) + A[7];
+        b[0] = b0; b[1] = b1;
+        return out_vec;
+    }
+    transformeq(vec) {  // A slight break from convention: it's the argument that gets overwritten, because it's what we're transforming.
+        return Mat.Transform(vec,this,vec);
+    }
+    transform(vec) {return this.transformeq(vec.clone());}
     
     /** Operators (Unary, Scalar-Valued) **/
     // Determinant
@@ -254,15 +309,9 @@ class Vec extends BufferFloats {
     }
     det() {return Mat.Det(this);}
     
-    // Trace (Equal to the sum of the eigenvalues)
-    static Trace(x) {
-        return Math.fround(Math.fround(x.a[0] + x.a[4]) + Math.fround(1.0))
-    }
-    trace() {return Mat.Trace(this);}
-    
     /** Operators (Unary, Matrix-Valued) **/
     // Matrix inverse. If no inverse exists, outputs the identity matrix.
-    static Inverse(out,x) {
+    static Inv(out,x) {
         let det = Mat.Det(x);
         if (det === 0.0) {
             out.set();
@@ -271,8 +320,8 @@ class Vec extends BufferFloats {
             let a = x.a;
             let b0 =  a[4]; let b1 = -a[1];
             let b3 = -a[3]; let b4 = a[0];
-            let b6 = Math.fround(a[3]*a[7]) - Math.fround(a[4]*a[6]); // by-dx
-            let b7 = Math.fround(a[1]*a[6]) - Math.fround(a[0]*a[7]); // cx-ay
+            let b6 = Math.fround(a[3]*a[7]) - Math.fround(a[4]*a[6]); 
+            let b7 = Math.fround(a[1]*a[6]) - Math.fround(a[0]*a[7]); 
             b.set(b0,b1, b3,b4, b6,b7);
             // Then, divide by the determinant to arrive at the inverse
             b.muleq(Math.fround(1 / det));
