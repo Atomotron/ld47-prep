@@ -187,3 +187,99 @@ class Vec extends BufferFloats {
     mapabseq(f) {return Vec.MapAbs(this,this,f);}
     mapabs(f) {return this.clone().mapabseq(f);}
 }
+
+/*
+ * Matrix class.
+ * Represents an affine transformation in 2D, making it a 3D matrix.
+ * OpenGL matrix standard:
+ *    [ a11 a21 a31   // Column 1
+ *      a12 a22 a32   // Column 2
+ *      a13 a23 a33 ] // Column 3
+ * Written in terms of vector multiplication,
+ *    [ xx xy 0 // Multiplied by x-component
+ *      yx yy 0 // Multiplied by y-component
+ *       x  y 1 ] // Multiplied by 1
+ * Indices
+ *    [   0   1   2   // Column 1
+ *        3   4   5   // Column 2
+ *        6   7   8 ] // Column 3
+ * Letters for Wolfram Alpha. :-)
+ *    [   a   c   0   // Column 1
+ *        b   d   0   // Column 2
+ *        x   y   1 ] // Column 3
+ * But in wolfram you would write that as...
+ *    { {a,b,x},{c,d,y},{0,0,1} }
+ */
+ class Mat extends BufferFloats {
+    constructor(xx=1.0,xy=0.0, yx=0.0,yy=1.0, x=0.0,y=0.0) {
+        let a = new Float32Array(9); // 3x3, to hand to opengl
+        super(a);
+        this.set(xx,xy, yx,yy, x,y);
+    }
+    // Creates a new Vector equal to this one
+    clone() {return new Mat(this.a[0],this.a[1],this.a[3],this.a[4],this.a[6],this.a[7]);}
+    // JS type conversion
+    valueOf() {return [this.a[0],this.a[1],this.a[3],this.a[4],this.a[6],this.a[7]];}
+    toString() { // Prints a linear equation equivalent to this matrix
+        return `x[${this.a[0]},${this.a[1]}] + y[${this.a[3]},${this.a[4]}] + [${this.a[6]},${this.a[7]}]`
+    }
+    // Constructor-style assignment from raw numbers
+    set(xx=1.0,xy=0.0, yx=0.0,yy=1.0, x=0.0,y=0.0) {
+        let a = this.a;
+        a[0] = xx; a[1] = xy; a[2] = 0.0;
+        a[3] = yx; a[4] = yy; a[5] = 0.0;
+        a[6] = a;  a[7] = y;  a[8] = 1.0;
+    }
+    /** Operators (Binary, Matrix-Valued) **/
+    // Scalar multiplication
+    static Mul(out,x,y_scalar) {
+        let a = x.a;
+        let b = out.a;
+        y_scalar = Math.fround(y_scalar);
+        b[0] = a[0]*y_scalar; b[1] = a[1]*y_scalar;
+        b[3] = a[3]*y_scalar; b[4] = a[4]*y_scalar;
+        b[6] = a[6]*y_scalar; b[7] = a[7]*y_scalar;
+        return out;
+    }
+    muleq(y_scalar) {return Mat.Mul(this,this,y_scalar);}
+    mul(y_scalar) {return this.clone().muleq(y_scalar);}
+    
+    
+    /** Operators (Unary, Scalar-Valued) **/
+    // Determinant
+    static Det(x) {
+        let a = x.a;
+        // xx*yy - xy*yx
+        return Math.fround(Math.fround(a[0]*a[4]) - Math.fround(a[1]*a[3]));
+    }
+    det() {return Mat.Det(this);}
+    
+    // Trace (Equal to the sum of the eigenvalues)
+    static Trace(x) {
+        return Math.fround(Math.fround(x.a[0] + x.a[4]) + Math.fround(1.0))
+    }
+    trace() {return Mat.Trace(this);}
+    
+    /** Operators (Unary, Matrix-Valued) **/
+    // Matrix inverse. If no inverse exists, outputs the identity matrix.
+    static Inverse(out,x) {
+        let det = Mat.Det(x);
+        if (det === 0.0) {
+            out.set();
+        } else {
+            // First, compute adjugate
+            let a = x.a;
+            let b0 =  a[4]; let b1 = -a[1];
+            let b3 = -a[3]; let b4 = a[0];
+            let b6 = Math.fround(a[3]*a[7]) - Math.fround(a[4]*a[6]); // by-dx
+            let b7 = Math.fround(a[1]*a[6]) - Math.fround(a[0]*a[7]); // cx-ay
+            b.set(b0,b1, b3,b4, b6,b7);
+            // Then, divide by the determinant to arrive at the inverse
+            b.muleq(Math.fround(1 / det));
+        }
+        return out;
+    }
+    inveq() {return Mat.Inverse(this,this)};
+    inv() {return this.clone().inveq()};
+    
+ }
