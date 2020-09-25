@@ -272,7 +272,7 @@ class Vec extends BufferFloats {
     subeq(x) {return Mat.Sub(this,this,x);}
     sub(x) {return this.clone().subeq(x);}
     
-    // Matrix multiplication (transformation of composition)
+    // Matrix multiplication (composition of transformations)
     static Compose(out,x,y) {
         let a = out.a; let b = x.a; let c = y.a;
         let a0 = Math.fround(b[0]*c[0])+Math.fround(b[3]*c[1]);
@@ -330,5 +330,4 @@ class Vec extends BufferFloats {
     }
     inveq() {return Mat.Inverse(this,this)};
     inv() {return this.clone().inveq()};
-    
  }
