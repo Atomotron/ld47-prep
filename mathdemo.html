@@ -7,9 +7,6 @@
 <body>
 <h1>Basic Tests: Matrix/Vector Math</h1>
 <script>
-let s = new Scalar(10);
-s.set(11);
-
 // Testing the most important matrix stuff
 function assert_eq(a,b) {
 	if (JSON.stringify(a) !== JSON.stringify(b)) {
@@ -18,6 +15,12 @@ function assert_eq(a,b) {
 	}
 	return true;
 }
+
+
+let s = new Scalar(10);
+s.set(11);
+assert_eq(s.a[0],11);
+
 // Really basic stuff
 let x = new Vec(1.0,2.0);
 let move = new Mat(1.0,0.0, 0.0,1.0, 1.0,0.0);
@@ -58,6 +61,7 @@ assert_eq(''+z.abs(), '5');
 assert_eq((new Vec(100,0)).norm(),new Vec(1,0));
 assert_eq((new Vec(1,0)).mapabs((r) => 100*r), new Vec(100,0));
 assert_eq(y.resolute(z),3);
+console.log(''+y,''+z,''+y.proj(z));
 </script>
 
 </body>

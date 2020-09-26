@@ -105,10 +105,11 @@ class Vec extends BufferFloats {
         if (y_mag === 0) {
             out.eq(y);
         } else {
-            let resolute = Vec.Resolute(x,y);
-            let ratio = Math.fround(resolute / y_mag);
-            out.a[0] = y[0] * ratio;
-            out.a[1] = y[1] * ratio;
+            let dot = Vec.Dot(x,y);
+            let norm = Vec.Dot(x,x);
+            let ratio = Math.fround(dot / norm);
+            out.a[0] = x.a[0] * ratio;
+            out.a[1] = x.a[1] * ratio;
         }
         return out;
     }
