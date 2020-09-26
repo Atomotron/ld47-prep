@@ -9,7 +9,19 @@
 <script>
 let s = new Scalar(10);
 s.set(11);
-console.log(s,s+0,s.valueOf());
+
+// Testing the most important matrix stuff
+
+// Really basic stuff
+let x = new Vec(1.0,2.0);
+let move = new Mat(1.0,0.0, 0.0,1.0, 1.0,0.0);
+console.log(move.toString(),move.transform(x).toString());
+
+
+let a = new Mat(1.0,2.0, -0.5,0.25, 4.0,8.0);
+let b = new Mat(1.0,-1.0, -1.0,1.0, -1.0,-2.0);
+
+// 
 
 </script>
 

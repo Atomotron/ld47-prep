@@ -234,7 +234,7 @@ class Vec extends BufferFloats {
         let a = this.a;
         a[0] = xx; a[1] = xy; a[2] = 0.0;
         a[3] = yx; a[4] = yy; a[5] = 0.0;
-        a[6] = a;  a[7] = y;  a[8] = 1.0;
+        a[6] = x;  a[7] = y;  a[8] = 1.0;
     }
     /** Operators (Binary, Matrix-Valued) **/
     // Scalar multiplication
