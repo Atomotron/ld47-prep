@@ -83,7 +83,7 @@ class Vec extends BufferFloats {
     
     // Addition
     static Add(out,x,y) {
-        out.a[0] = x.a[0]+y.a[1];
+        out.a[0] = x.a[0]+y.a[0];
         out.a[1] = x.a[1]+y.a[1];
         return out;
     }
@@ -92,7 +92,7 @@ class Vec extends BufferFloats {
     
     // Subtraction
     static Sub(out,x,y) {
-        out.a[0] = x.a[0]-y.a[1];
+        out.a[0] = x.a[0]-y.a[0];
         out.a[1] = x.a[1]-y.a[1];
         return out;
     }

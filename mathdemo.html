@@ -32,6 +32,13 @@ let ab = a.compose(b);
 assert_eq(''+ab.transform(x),''+a.transform(b.transform(x))); // (AB)(x) = A(Bx)
 assert_eq(''+a.compose(a.inv()),''+new Mat()); // AA^-1 = I
 assert_eq(''+b.compose(b.inv()),''+new Mat()); // BB^-1 = I
+
+// Algebra
+assert_eq(
+ ''+(a.add(b)).transform(x),
+ ''+ ( a.transform(x).add(b.transform(x)) )
+);
+
 </script>
 
 </body>
