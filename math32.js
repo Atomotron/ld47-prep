@@ -144,6 +144,7 @@ class Vec extends BufferFloats {
         let dot = Vec.Dot(x,y);
         return Math.fround(dot / x_mag);
     }
+    resolute(x) {return Vec.Resolute(this,x);}
     
     /** Operations (Unary, Scalar-Valued) **/
     // Magnitude squared (scalar output, sqeq therefore does not exist)

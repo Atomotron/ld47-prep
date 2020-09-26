@@ -56,6 +56,8 @@ assert_eq(''+x.add(z).dist(x), '5');
 assert_eq(''+z.sq(), '25');
 assert_eq(''+z.abs(), '5');
 assert_eq((new Vec(100,0)).norm(),new Vec(1,0));
+assert_eq((new Vec(1,0)).mapabs((r) => 100*r), new Vec(100,0));
+assert_eq(y.resolute(z),3);
 </script>
 
 </body>
