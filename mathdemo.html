@@ -7,61 +7,7 @@
 <body>
 <h1>Basic Tests: Matrix/Vector Math</h1>
 <script>
-// Testing the most important matrix stuff
-function assert_eq(a,b) {
-	if (JSON.stringify(a) !== JSON.stringify(b)) {
-		console.trace(a,"!==",b); // Produces a stack trace
-		return false;
-	}
-	return true;
-}
-
-
-let s = new Scalar(10);
-s.set(11);
-assert_eq(s.a[0],11);
-
-// Really basic stuff
-let x = new Vec(1.0,2.0);
-let move = new Mat(1.0,0.0, 0.0,1.0, 1.0,0.0);
-let move_inv = move.inv();
-assert_eq(''+x,''+move_inv.transform(move.transform(x))); // x = AA^-1 x
-
-
-let a = new Mat(1.0,2.0, -0.5,0.25, 4.0,8.0);
-let b = new Mat(0.0,1.0, -1.0,-.0, -1.0,-2.0);
-
-let ab = a.compose(b);
-assert_eq(''+ab.transform(x),''+a.transform(b.transform(x))); // (AB)(x) = A(Bx)
-assert_eq(''+a.compose(a.inv()),''+new Mat()); // AA^-1 = I
-assert_eq(''+b.compose(b.inv()),''+new Mat()); // BB^-1 = I
-
-// Algebra
-assert_eq( // +
- ''+(a.add(b)).transform(x),
- ''+ ( a.transform(x).add(b.transform(x)) )
-);
-assert_eq( // -
- ''+(a.sub(b)).transform(x),
- ''+ ( a.transform(x).sub(b.transform(x)) )
-);
-assert_eq(''+a.mul(8.0).transform(x),''+a.transform(x).mul(8.0));
-
-// Fancy vector methods
-let y = new Vec(1,0);
-assert_eq(''+y.dot(x),'1');
-assert_eq(''+x.cross(x),'0');
-assert_eq(''+y.cross(y),'0');
-assert_eq(''+x.cross(y),'-2');
-
-let z = new Vec(3,4);
-assert_eq(''+x.add(z).dist(x), '5');
-assert_eq(''+z.sq(), '25');
-assert_eq(''+z.abs(), '5');
-assert_eq((new Vec(100,0)).norm(),new Vec(1,0));
-assert_eq((new Vec(1,0)).mapabs((r) => 100*r), new Vec(100,0));
-assert_eq(y.resolute(z),3);
-console.log(''+y,''+z,''+y.proj(z));
+run_math32_tests();
 </script>
 
 </body>

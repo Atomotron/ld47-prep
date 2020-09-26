@@ -4,6 +4,7 @@
  *     Scalar.Add(out,x,y) // Addition with uncoupled output
  *     y.addeq(x) // In-place addition, changes y, returns this for chaining.
  *     y.add(x)   // Allocates and returns a new scalar
+ * The interfaces a pretty uniformly patterned.
  *
  * Note: scalar-valued functions on vector take and return JS numbers which we expect the
  *       JIT to specially detect and deal with as f32s. This makes the interface less uniform,
@@ -194,6 +195,7 @@ class Vec extends BufferFloats {
  * Matrix class.
  * Represents an affine transformation in 2D. It's stored as a 3D matrix.
  * However, its algebra is that of affine transformation operators.
+ *
  * Supports:
  *  - Addition, Subtraction, Scalar multiplication (Add, Sub, Mul)
  *  - Vector transformation, Transformation composition (Transform, Compose)
@@ -333,3 +335,66 @@ class Vec extends BufferFloats {
     inveq() {return Mat.Inv(this,this)};
     inv() {return this.clone().inveq()};
  }
+ 
+function run_math32_tests() {
+    function assert_eq(a,b) {
+	    if (JSON.stringify(a) !== JSON.stringify(b)) {
+		    console.trace(a,"!==",b); // Produces a stack trace
+		    return false;
+	    }
+	    return true;
+    }
+    
+    // Scalar
+    let s = new Scalar(10);
+    s.set(11);
+    assert_eq(s.a[0],11);
+
+    // Matrices and vectors
+    let x = new Vec(1.0,2.0);
+    let move = new Mat(1.0,0.0, 0.0,1.0, 1.0,0.0);
+    let move_inv = move.inv();
+    let a = new Mat(1.0,2.0, -0.5,0.25, 4.0,8.0);
+    let b = new Mat(0.0,1.0, -1.0,-.0, -1.0,-2.0);
+    
+    //Composition
+    let ab = a.compose(b);
+    assert_eq(''+ab.transform(x),''+a.transform(b.transform(x))); // (AB)(x) = A(Bx)
+
+    // Inversion
+    assert_eq(''+x,''+move_inv.transform(move.transform(x))); // x = AA^-1 x
+    assert_eq(''+a.compose(a.inv()),''+new Mat()); // AA^-1 = I
+    assert_eq(''+b.compose(b.inv()),''+new Mat()); // BB^-1 = I
+
+    // Algebra
+    assert_eq( // +
+     ''+(a.add(b)).transform(x),
+     ''+ ( a.transform(x).add(b.transform(x)) )
+    );
+    assert_eq( // -
+     ''+(a.sub(b)).transform(x),
+     ''+ ( a.transform(x).sub(b.transform(x)) )
+    );
+    assert_eq(''+a.mul(8.0).transform(x),''+a.transform(x).mul(8.0));
+
+    // Fancy vector methods
+    let y = new Vec(1,0);
+    assert_eq(''+y.dot(x),'1');
+    assert_eq(''+x.cross(x),'0');
+    assert_eq(''+y.cross(y),'0');
+    assert_eq(''+x.cross(y),'-2');
+    
+    // Distance and magnitude
+    let z = new Vec(3,4);
+    assert_eq(''+x.add(z).dist(x), '5');
+    assert_eq(''+z.sq(), '25');
+    assert_eq(''+z.abs(), '5');
+    
+    // Normalization and magnitude mapping
+    assert_eq((new Vec(100,0)).norm(),new Vec(1,0));
+    assert_eq((new Vec(1,0)).mapabs((r) => 100*r), new Vec(100,0));
+    
+    // Scalar and vector projection
+    assert_eq(y.resolute(z),3);
+    assert_eq(y.proj(z),new Vec(3,0));
+} 
