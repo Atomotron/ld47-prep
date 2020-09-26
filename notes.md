@@ -1,4 +1,13 @@
-# Wed 23 Sep 2020 05:08:33 PM CDT
+# Sat 26 Sep 2020 11:08:33 AM CDT
+
+It's time to figure out how audio works.
+
+Update: figured out how audio works.
+
+In the future, I'm going to want to come up with a better volume control mechanism. Controllers that can
+be swapped out from controlling a single gain node are not such a great option because of the hard transitions
+that can happen if you go straight from one to another. An improved option would be to have one dynamic controller
+with adjustable volume targets. I might do this later.
 
 ## Things the engine needs to do:
 

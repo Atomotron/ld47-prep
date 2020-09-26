@@ -2,13 +2,46 @@
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
+    <script src="sounds.js"></script>
 </head>
 <body>
 <h1>Basic Tests: JS Audio</h1>
 <p> Note: It is crucial that, if you're developing on Firefox, you go to about:config and set <code>privacy.file_unique_origin</code> to false. If you don't, Firefox will not allow javascript to access image and sound files loaded from the disk. This is not required when the html is loaded from a web server, only when you are loading it from your hard drive.</p>
-<p> Furthermore, if you are using Safari, Javascript will not be allowed to play any sounds until one is played during a user interaction event. </p>
-<div>
-<audio controls><source src="Chad_Crouch_-_Negentropy.mp3" type="audio/mpeg"></audio>
+<p> Furthermore, Javascript will not be allowed to play any sounds until one is played during a user interaction event. </p>
+<script>
+
+function on_loaded(sound) {
+    const el = document.createElement("a");
+    el.textContent = "Mouse over here to hit!";
+    el.addEventListener("mouseover",(e) => aud.play("hit"));
+    document.querySelector("body").appendChild(el);
+    const el2 = document.createElement("a");
+    el2.textContent = "Click here to play music!";
+    el2.addEventListener("click",(e) => aud.start_music("negentropy"));
+    el2.addEventListener("mouseout",(e) => aud.stop_music("negentropy",1000));
+    document.querySelector("body").appendChild(el2);
+    let last_t = null;
+    (function run(t) {
+        if (last_t !== null) {
+            const dt = (t - last_t);
+            aud.tick(dt);
+        }
+        last_t = t;
+        window.requestAnimationFrame(run);
+    })(null);
+}
+
+const aud = new Sounds(
+    {"negentropy": "sound/Chad_Crouch_-_Negentropy.mp3"},
+    {"hit": "sound/hit.mp3"},
+    (l) => {
+        if (l.countdown === 0) {
+            on_loaded(l);
+        }
+    }
+);
+</script>
+
 </div>
 </body>
 </html>
