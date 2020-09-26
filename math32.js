@@ -163,7 +163,7 @@ class Vec extends BufferFloats {
     static Norm(out,x) {
         let mag = Vec.Abs(x);
         out.eq(x);
-        out.diveq(mag);
+        out.muleq(Math.fround(Math.fround(1.0)/mag));
         return out;
     }
     normeq(x) {return Vec.Norm(this,this,x);}

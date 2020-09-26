@@ -47,7 +47,15 @@ assert_eq(''+a.mul(8.0).transform(x),''+a.transform(x).mul(8.0));
 // Fancy vector methods
 let y = new Vec(1,0);
 assert_eq(''+y.dot(x),'1');
+assert_eq(''+x.cross(x),'0');
+assert_eq(''+y.cross(y),'0');
+assert_eq(''+x.cross(y),'-2');
 
+let z = new Vec(3,4);
+assert_eq(''+x.add(z).dist(x), '5');
+assert_eq(''+z.sq(), '25');
+assert_eq(''+z.abs(), '5');
+assert_eq((new Vec(100,0)).norm(),new Vec(1,0));
 </script>
 
 </body>
