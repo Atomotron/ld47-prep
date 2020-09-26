@@ -34,10 +34,19 @@ assert_eq(''+a.compose(a.inv()),''+new Mat()); // AA^-1 = I
 assert_eq(''+b.compose(b.inv()),''+new Mat()); // BB^-1 = I
 
 // Algebra
-assert_eq(
+assert_eq( // +
  ''+(a.add(b)).transform(x),
  ''+ ( a.transform(x).add(b.transform(x)) )
 );
+assert_eq( // -
+ ''+(a.sub(b)).transform(x),
+ ''+ ( a.transform(x).sub(b.transform(x)) )
+);
+assert_eq(''+a.mul(8.0).transform(x),''+a.transform(x).mul(8.0));
+
+// Fancy vector methods
+let y = new Vec(1,0);
+assert_eq(''+y.dot(x),'1');
 
 </script>
 

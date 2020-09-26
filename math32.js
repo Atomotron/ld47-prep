@@ -120,7 +120,7 @@ class Vec extends BufferFloats {
     /** Operations (Binary, Scalar-Valued) **/
     // Dot product
     static Dot(x,y) {
-        return Math.fround(x.a[0]*x.a[0]) + Math.fround(y.a[1]*y.a[1]);
+        return Math.fround(x.a[0]*y.a[0]) + Math.fround(x.a[1]*y.a[1]);
     }
     dot(x) {return Vec.Dot(this,x);}
     
