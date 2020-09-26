@@ -322,12 +322,12 @@ class Vec extends BufferFloats {
             let b3 = -a[3]; let b4 = a[0];
             let b6 = Math.fround(a[3]*a[7]) - Math.fround(a[4]*a[6]); 
             let b7 = Math.fround(a[1]*a[6]) - Math.fround(a[0]*a[7]); 
-            b.set(b0,b1, b3,b4, b6,b7);
+            out.set(b0,b1, b3,b4, b6,b7);
             // Then, divide by the determinant to arrive at the inverse
-            b.muleq(Math.fround(1 / det));
+            out.muleq(Math.fround(1 / det));
         }
         return out;
     }
-    inveq() {return Mat.Inverse(this,this)};
+    inveq() {return Mat.Inv(this,this)};
     inv() {return this.clone().inveq()};
  }

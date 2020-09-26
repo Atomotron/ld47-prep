@@ -11,18 +11,27 @@ let s = new Scalar(10);
 s.set(11);
 
 // Testing the most important matrix stuff
-
+function assert_eq(a,b) {
+	if (JSON.stringify(a) !== JSON.stringify(b)) {
+		console.trace(a,"!==",b); // Produces a stack trace
+		return false;
+	}
+	return true;
+}
 // Really basic stuff
 let x = new Vec(1.0,2.0);
 let move = new Mat(1.0,0.0, 0.0,1.0, 1.0,0.0);
-console.log(move.toString(),move.transform(x).toString());
+let move_inv = move.inv();
+assert_eq(''+x,''+move_inv.transform(move.transform(x))); // x = AA^-1 x
 
 
 let a = new Mat(1.0,2.0, -0.5,0.25, 4.0,8.0);
-let b = new Mat(1.0,-1.0, -1.0,1.0, -1.0,-2.0);
+let b = new Mat(0.0,1.0, -1.0,-.0, -1.0,-2.0);
 
-// 
-
+let ab = a.compose(b);
+assert_eq(''+ab.transform(x),''+a.transform(b.transform(x))); // (AB)(x) = A(Bx)
+assert_eq(''+a.compose(a.inv()),''+new Mat()); // AA^-1 = I
+assert_eq(''+b.compose(b.inv()),''+new Mat()); // BB^-1 = I
 </script>
 
 </body>
