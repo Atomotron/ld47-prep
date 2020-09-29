@@ -19,31 +19,31 @@ class ShaderCompiler {
         const vshaders = new Map();
         const fshaders = new Map();
         for (const [name,[vname,fname]] of programs) {
-            this.loadShader(vname,vshaders,gl.VERTEX_SHADER);
-            this.loadShader(fname,fshaders,gl.FRAGMENT_SHADER);
+            this.loadShader(gl,vname,vshaders,gl.VERTEX_SHADER);
+            this.loadShader(gl,fname,fshaders,gl.FRAGMENT_SHADER);
         }
         // Compile shaders
-        this.compileShaders(vshaders,gl.VERTEX_SHADER);
-        this.compileShaders(fshaders,gl.FRAGMENT_SHADER);
+        this.compileShaders(gl,vshaders,gl.VERTEX_SHADER);
+        this.compileShaders(gl,fshaders,gl.FRAGMENT_SHADER);
         // Log errors in shader compilation.
-        this.checkShaders(vshaders);
-        this.checkShaders(fshaders);
+        this.checkShaders(gl,vshaders);
+        this.checkShaders(gl,fshaders);
         // Link programs
-        this.linkPrograms(programs,vshaders,fshaders);
+        this.linkPrograms(gl,programs,vshaders,fshaders);
         // Log errors in linking
-        this.checkPrograms(programs);
+        this.checkPrograms(gl,programs);
         // Check uniforms and attributes
         this.uniformProfiles = new Map();
         this.samplerProfiles = new Map();
         this.attributeProfiles = new Map();
-        this.analyzePrograms(programs);
+        this.analyzePrograms(gl,programs);
         // Compilation done, we can save the map now.
         this.programs = programs;
     }
     error(context,log) {
         this.errors.push(new ShaderCompilerError(context,log));
     }
-    loadShader(name,map,type) {
+    loadShader(gl,name,map,type) {
         const element = document.getElementById(name);
         if (map.has(name)) return; // memoization
         if (element !== null) {
@@ -59,7 +59,7 @@ class ShaderCompiler {
         }
         map.set(name,null);
     }
-    compileShaders(map,type) {
+    compileShaders(gl,map,type) {
         for (const [name,source] of map) {
             if (source !== null) {
                 const shader = gl.createShader(type);
@@ -69,7 +69,7 @@ class ShaderCompiler {
             }
         }
     }
-    checkShaders(map) {
+    checkShaders(gl,map) {
         // Checking shaders separately from compilation lets the driver compile in parallel
         for (const [name,shader] of map) {
             if (shader !== null) {
@@ -80,7 +80,7 @@ class ShaderCompiler {
             }
         }
     }
-    linkPrograms(programs,vshaders,fshaders) {
+    linkPrograms(gl,programs,vshaders,fshaders) {
         for (const [name,[vname,fname]] of programs) {
             const [vshader,fshader] = [vshaders.get(vname),fshaders.get(fname)];
             if (vshader !== null && fshader !== null) {
@@ -94,7 +94,7 @@ class ShaderCompiler {
             }
         }
     }
-    checkPrograms(programs) {
+    checkPrograms(gl,programs) {
         for (const [name,program] of programs) {
             if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
                 this.error(name,gl.getShaderInfoLog(program));
@@ -102,7 +102,7 @@ class ShaderCompiler {
             }
         }
     }
-    analyzePrograms(programs) {
+    analyzePrograms(gl,programs) {
         for (const [name,program] of programs) {
             const nattributes = gl.getProgramParameter(program,gl.ACTIVE_ATTRIBUTES);
             const attributeProfile = [];
