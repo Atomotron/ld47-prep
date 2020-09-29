@@ -25,13 +25,7 @@ class BufferFloats {
 }
 
 /* f32 Scalar */
-class Scalar extends BufferFloats {
-    /** Constructors **/
-    constructor(x=0.0) {
-        let n = new Float32Array(1);
-        n[0] = x;
-        super(n);
-    }
+class AbstractScalar extends BufferFloats {
     // Creates a new Scalar equal to this one
     clone() {return new Scalar(this.a[0]);}
     // JS type conversion
@@ -47,6 +41,14 @@ class Scalar extends BufferFloats {
     }
     zeroeq() {return Scalar.Zero(this);}
     zero() {return this.clone().zeroeq();} // Redundant but here for completeness
+}
+/* Scalar with allocating constructor. */
+class Scalar extends AbstractScalar {
+    constructor(x=0.0) {
+        let n = new Float32Array(1);
+        n[0] = x;
+        super(n);
+    }
 }
 /*
  * 2D Vector
