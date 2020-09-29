@@ -120,7 +120,7 @@ class ShaderCompiler {
                 const info = gl.getActiveUniform(program, i);
                 if (info.type in [gl.SAMPLER_2D,gl.SAMPLER_CUBE]) { // sampler uniform
                     samplerProfile.push(info);
-                else { // The usual kind of uniform
+                } else { // The usual kind of uniform
                     uniformProfile.push(info);
                 }
             }
