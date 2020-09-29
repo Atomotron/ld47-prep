@@ -11,21 +11,27 @@
  *       but I believe the convience of being able to write normal arithmetic expressions makes
  *       up for that.
  */
-class BufferFloats {
+class ArrayFloats {
     constructor(array) {
         this.a = array;
     }    
+    /** Operations (Constant) **/
+    // Zeroing
+    static Zero(out) {
+        return out.fill(out,0);
+    }
+    zeroeq() {return ArrayFloats.Zero(this);}
     /** Operations (Unary) **/
     // Assignment
     static Eq(out,x) {
         out.a.set(x.a);
         return out;
     }
-    eq(x) {return Scalar.Eq(this,x);}
+    eq(x) {return ArrayFloats.Eq(this,x);}
 }
 
 /* f32 Scalar */
-class AbstractScalar extends BufferFloats {
+class AbstractScalar extends ArrayFloats {
     // Creates a new Scalar equal to this one
     clone() {return new Scalar(this.a[0]);}
     // JS type conversion
@@ -58,14 +64,7 @@ class Scalar extends AbstractScalar {
  * - Dot product, Cross product, projection, scalar projection (Dot, Cross, Proj, Resolute) 
  * - Normalization, magnitude mapping (Norm, MapAbs)
  */
-class Vec extends BufferFloats {
-    /** Constructors **/
-    constructor(x=0.0,y=0.0) {
-        let a = new Float32Array(2);
-        a[0] = x; // Converts f64 to f32
-        a[1] = y; // Converts f64 to f32
-        super(a);
-    }
+class AbstractVec extends ArrayFloats {
     // Creates a new Vector equal to this one
     clone() {return new Vec(this.a[0],this.a[1]);}
     // JS type conversion
@@ -192,6 +191,14 @@ class Vec extends BufferFloats {
     mapabseq(f) {return Vec.MapAbs(this,this,f);}
     mapabs(f) {return this.clone().mapabseq(f);}
 }
+class Vec extends AbstractVec {
+    constructor(x=0.0,y=0.0) {
+        let a = new Float32Array(2);
+        a[0] = x; // Converts f64 to f32
+        a[1] = y; // Converts f64 to f32
+        super(a);
+    }
+}
 
 /*
  * Matrix class.
@@ -222,12 +229,7 @@ class Vec extends BufferFloats {
  * But in wolfram you would write that as...
  *    { {a,c,x},{b,d,y},{0,0,1} }
  */
- class Mat extends BufferFloats {
-    constructor(xx=1.0,xy=0.0, yx=0.0,yy=1.0, x=0.0,y=0.0) {
-        let a = new Float32Array(9); // 3x3, to hand to opengl
-        super(a);
-        this.set(xx,xy, yx,yy, x,y);
-    }
+ class AbstractMat extends ArrayFloats {
     // Creates a new Vector equal to this one
     clone() {return new Mat(this.a[0],this.a[1],this.a[3],this.a[4],this.a[6],this.a[7]);}
     // JS type conversion
@@ -336,8 +338,16 @@ class Vec extends BufferFloats {
     }
     inveq() {return Mat.Inv(this,this)};
     inv() {return this.clone().inveq()};
- }
- 
+}
+
+class Mat extends AbstractMat {
+    constructor(xx=1.0,xy=0.0, yx=0.0,yy=1.0, x=0.0,y=0.0) {
+        let a = new Float32Array(9); // 3x3, to hand to opengl
+        super(a);
+        this.set(xx,xy, yx,yy, x,y);
+    }
+}
+
 function run_math32_tests() {
     function assert_eq(a,b) {
 	    if (JSON.stringify(a) !== JSON.stringify(b)) {
