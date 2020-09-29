@@ -14,6 +14,9 @@
 
 <script id="shader-v" type="x-shader/x-vertex">#version 300 es
 out vec3 vcolor;
+in vec2 vertex;
+in vec3 model_x;
+in vec3 model_y;
 uniform float t;
 uniform mat3 view;
 const vec2 square[4] = vec2[4](
@@ -24,11 +27,12 @@ const vec2 square[4] = vec2[4](
 );
 void main() {
     float s = float(gl_InstanceID)/10000.0;
+    mat3 model = transpose(mat3(model_x,model_y,vec3(0.0,0.0,1.0)));
     mat2 m = mat2(
-        sin(s*t)*s, cos(s*t)*s,
-        -cos(s*t)*s, sin(s*t)*s
-    )*2.0;
-    gl_Position = vec4(view * vec3(m*square[gl_VertexID],1.0),1.0);
+        sin(s*t), cos(s*t),
+        -cos(s*t), sin(s*t)
+    )*0.1;
+    gl_Position = vec4(view * model * vec3(m*vertex,1.0),1.0);
     
     vcolor = vec3(square[gl_VertexID],0.5);
 }
@@ -62,9 +66,42 @@ function start(canvasManager) {
     const view_loc = gl.getUniformLocation(program,"view");
     const view = new Mat();
     
+    // Setting up square geometry to get around the,
+    // "drawArraysInstanced: One active vertex attrib (if any are active) must have a divisor of 0."
+    // bug.
+    const square = new Float32Array([
+        0.0,0.0,
+        1.0,0.0,
+        0.0,1.0,
+        1.0,1.0,
+    ]);    
+    const square_buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, square_buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, square, gl.STATIC_DRAW);
+    const vertex_loc = gl.getAttribLocation(program,'vertex');
+    gl.vertexAttribPointer(vertex_loc, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(vertex_loc);
     // Setting up VAO/VBO stuff for instanced rendering
-    // Z data
-    
+    const N_INSTANCES = 10000;
+    const mat3_data = new Float32Array(9*N_INSTANCES);
+    for (let i=0; i<mat3_data.length; ++i) {
+        const j = i % 9;
+        mat3_data[i] = 2.0*Math.random() - 1.0;
+        /*if (j !== 2 && j !== 5 && j !== 8) {
+        }*/
+    }
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, mat3_data, gl.STATIC_DRAW);
+    const model_x_loc = gl.getAttribLocation(program,'model_x');
+    gl.vertexAttribPointer(model_x_loc, 3, gl.FLOAT, false, 4*9, 4*0);
+    gl.vertexAttribDivisor(model_x_loc, 1);
+    gl.enableVertexAttribArray(model_x_loc);
+    const model_y_loc = gl.getAttribLocation(program,'model_y');
+    gl.vertexAttribPointer(model_y_loc, 3, gl.FLOAT, false, 4*9, 4*3);
+    gl.vertexAttribDivisor(model_y_loc, 1);
+    gl.enableVertexAttribArray(model_y_loc);
+        
     
     let timer = 0;
     let frames = 0;
@@ -86,7 +123,7 @@ function start(canvasManager) {
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
             gl.uniform1f(t_loc,t*0.01);
             gl.uniformMatrix3fv(view_loc,false,view.a);
-            gl.drawArraysInstanced(gl.TRIANGLE_STRIP,0,4,10000);
+            gl.drawArraysInstanced(gl.TRIANGLE_STRIP,0,4,N_INSTANCES);
         }
         last_t = t;
         window.requestAnimationFrame(loop);
