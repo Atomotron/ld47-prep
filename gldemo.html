@@ -47,7 +47,6 @@ void main() {
 
 function start(canvasManager) {
     const gl = canvasManager.gl;
-    console.log(gl);
     const sc = new ShaderCompiler(gl,
         {'shader':['shader-v','shader-f']},
     );
