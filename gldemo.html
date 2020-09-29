@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
+    <script src="math32.js"></script>
     <script src="shadercompiler.js"></script>
     <script src="canvasmanager.js"></script>
 </head>
@@ -15,7 +16,7 @@
 out vec3 vcolor;
 uniform float t;
 uniform float aspect;
-uniform vec2 mouse;
+uniform mat3 view;
 const vec2 square[4] = vec2[4](
     vec2(0.0,0.0),
     vec2(1.0,0.0),
@@ -28,7 +29,7 @@ void main() {
         sin(s*t)*s/aspect, cos(s*t)*s,
         -cos(s*t)*s/aspect, sin(s*t)*s
     )*2.0;
-    gl_Position = vec4(m*square[gl_VertexID] + mouse,1.0,1.0);
+    gl_Position = vec4(view * vec3(m*square[gl_VertexID],1.0),1.0);
     
     vcolor = vec3(square[gl_VertexID],0.5);
 }
@@ -60,7 +61,11 @@ function start(canvasManager) {
     gl.useProgram(program);
     const t_loc = gl.getUniformLocation(program,"t");
     const aspect_loc = gl.getUniformLocation(program,"aspect");
-    const mouse_loc = gl.getUniformLocation(program,"mouse");
+    const view_loc = gl.getUniformLocation(program,"view");
+    const view = new Mat();
+    
+    // Setting up VAO/VBO stuff for instanced rendering
+    // Z-
     
     let timer = 0;
     let frames = 0;
@@ -77,10 +82,11 @@ function start(canvasManager) {
                 frames = 0;
                 timer = 0;
             }
+            view.translationeq(cm.mouse_x,cm.mouse_y);
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
             gl.uniform1f(t_loc,t*0.01);
             gl.uniform1f(aspect_loc,cm.aspectRatio);
-            gl.uniform2f(mouse_loc,cm.mouse_x,cm.mouse_y);
+            gl.uniformMatrix3fv(view_loc,false,view.a);
             gl.drawArraysInstanced(gl.TRIANGLE_STRIP,0,4,10000);
         }
         last_t = t;
