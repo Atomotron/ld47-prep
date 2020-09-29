@@ -15,7 +15,6 @@
 <script id="shader-v" type="x-shader/x-vertex">#version 300 es
 out vec3 vcolor;
 uniform float t;
-uniform float aspect;
 uniform mat3 view;
 const vec2 square[4] = vec2[4](
     vec2(0.0,0.0),
@@ -26,8 +25,8 @@ const vec2 square[4] = vec2[4](
 void main() {
     float s = float(gl_InstanceID)/10000.0;
     mat2 m = mat2(
-        sin(s*t)*s/aspect, cos(s*t)*s,
-        -cos(s*t)*s/aspect, sin(s*t)*s
+        sin(s*t)*s, cos(s*t)*s,
+        -cos(s*t)*s, sin(s*t)*s
     )*2.0;
     gl_Position = vec4(view * vec3(m*square[gl_VertexID],1.0),1.0);
     
@@ -60,12 +59,12 @@ function start(canvasManager) {
     // Initial gl setup
     gl.useProgram(program);
     const t_loc = gl.getUniformLocation(program,"t");
-    const aspect_loc = gl.getUniformLocation(program,"aspect");
     const view_loc = gl.getUniformLocation(program,"view");
     const view = new Mat();
     
     // Setting up VAO/VBO stuff for instanced rendering
-    // Z-
+    // Z data
+    
     
     let timer = 0;
     let frames = 0;
@@ -83,9 +82,9 @@ function start(canvasManager) {
                 timer = 0;
             }
             view.translationeq(cm.mouse_x,cm.mouse_y);
+            view.a[0] = 1/cm.aspectRatio;
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
             gl.uniform1f(t_loc,t*0.01);
-            gl.uniform1f(aspect_loc,cm.aspectRatio);
             gl.uniformMatrix3fv(view_loc,false,view.a);
             gl.drawArraysInstanced(gl.TRIANGLE_STRIP,0,4,10000);
         }
