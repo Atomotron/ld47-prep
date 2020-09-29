@@ -73,6 +73,16 @@ class AbstractVec extends ArrayFloats {
     // Assigns a value, but taking JS numbers instead of a Vec like Eq would.
     set(x,y) {this.a[0]=x;this.a[1]=y;}
     
+    /** Constructive setters **/
+    static Polar(out,r,theta) {
+        theta = Math.fround(theta);
+        r = Math.fround(r);
+        out.a[0] = Math.fround(Math.fround(Math.cos(theta))*r);
+        out.a[1] = Math.fround(Math.fround(Math.sin(theta))*r);
+        return out;
+    }
+    polareq(r,theta) {return Vec.Polar(this,r,theta)};
+    
     /** Operations (Binary, Vector-Valued) **/
     // Scalar Multiplication
     static Mul(out,x,y_scalar) {
@@ -244,6 +254,17 @@ class Vec extends AbstractVec {
         a[3] = yx; a[4] = yy; a[5] = 0.0;
         a[6] = x;  a[7] = y;  a[8] = 1.0;
     }
+    
+    /** Constructive setters **/
+    static Translation(out,dx,dy) {
+        const a = out.a;
+        a[0] = 1.0; a[1] = 0.0; a[2] = 0.0;
+        a[3] = 0.0; a[4] = 1.0; a[5] = 0.0;
+        a[6] = dx;  a[7] = dy;  a[8] = 1.0;
+        return out;
+    }
+    translationeq(dx,dy) {return Mat.Translation(this,dx,dy);}
+    
     /** Operators (Binary, Matrix-Valued) **/
     // Scalar multiplication
     static Mul(out,x,y_scalar) {
