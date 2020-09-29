@@ -8,11 +8,13 @@
 <h1>Basic Tests: WebGL</h1>
 <div id="fps">Loading...</div>
 
-<canvas id="canvas" width=600 height=600></canvas>
+<div id="canvas-container" style="height:70vh; width:100%"></div>
 
 <script id="shader-v" type="x-shader/x-vertex">#version 300 es
 out vec3 vcolor;
 uniform float t;
+uniform float aspect;
+uniform vec2 mouse;
 const vec2 square[4] = vec2[4](
     vec2(0.0,0.0),
     vec2(1.0,0.0),
@@ -22,10 +24,10 @@ const vec2 square[4] = vec2[4](
 void main() {
     float s = float(gl_InstanceID)/10000.0;
     mat2 m = mat2(
-        sin(s*t)*s, cos(s*t)*s,
-        -cos(s*t)*s, sin(s*t)*s
+        sin(s*t)*s/aspect, cos(s*t)*s,
+        -cos(s*t)*s/aspect, sin(s*t)*s
     )*2.0;
-    gl_Position = vec4(m*square[gl_VertexID],1.0,1.0);
+    gl_Position = vec4(m*square[gl_VertexID] + mouse,1.0,1.0);
     
     vcolor = vec3(square[gl_VertexID],0.5);
 }
@@ -42,8 +44,59 @@ void main() {
 </script>
 <script>
 
-function start(canvas,gl) {
-    let last_t = null;
+class CanvasManager {
+    constructor(container) {
+        this.container = container;
+        // Create canvas element
+        // this.container.style.overflow = "hidden";
+        this.canvas = document.createElement("canvas");
+        [this.canvas.width,this.canvas.height] = [this.container.clientWidth,this.container.clientHeight];
+        this.container.appendChild(this.canvas);
+        this.aspectRatio = this.canvas.width/this.canvas.height;
+        
+        // Set up mouse inputs
+        this.mouse_x = 0;
+        this.mouse_y = 0;
+        this.canvas.addEventListener('mousemove',(e) => {
+            const rect = this.canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            this.mouse_x = 2.0*x/rect.width - 1.0; // Convert to gl coords
+            this.mouse_y = 1.0 - 2.0*y/rect.height;
+        });
+        
+        // Create gl context
+        this.gl = this.canvas.getContext("webgl2");
+        if (this.gl === null) {
+            alert("Could not get WebGL2 context.\nPlease use a modern browser like Firefox.");
+        } else {
+            this.setupContext();
+        }
+    }
+    setupContext() {
+        const gl = this.gl;
+        gl.clearColor(0.5, 0.5, 0.5, 1.0);
+        gl.enable(gl.DEPTH_TEST);
+        gl.depthFunc(gl.GREATER);
+        gl.clearDepth(0.0);
+        gl.enable(gl.SCISSOR_TEST);
+        this.updateSize();
+    }
+    updateSize() {
+        if (this.canvas.width === this.container.clientWidth && this.canvas.height === this.container.clientHeight) {
+            return; // Size is already set
+        }
+        [this.canvas.width,this.canvas.height] = [this.container.clientWidth,this.container.clientHeight];
+        const gl = this.gl;
+        gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+        gl.scissor(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+        this.aspectRatio = gl.drawingBufferWidth/gl.drawingBufferHeight;
+    }
+}
+
+function start(canvasManager) {
+    const gl = canvasManager.gl;
+    console.log(gl);
     const sc = new ShaderCompiler(gl,
         {'shader':['shader-v','shader-f']},
     );
@@ -51,22 +104,19 @@ function start(canvas,gl) {
         console.log(e.toString());
     }
     const program = sc.programs.get('shader');
-    const uniforms = new Uniforms(sc.uniformProfiles.get('shader'));
+    //const uniforms = new Uniforms(sc.uniformProfiles.get('shader'));
     
     // Initial gl setup
     gl.useProgram(program);
     const t_loc = gl.getUniformLocation(program,"t");
-    gl.clearColor(0.5, 0.5, 0.5, 1.0);
-    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-    gl.enable(gl.DEPTH_TEST);
-    gl.depthFunc(gl.GREATER);
-    gl.clearDepth(0.0);
-    gl.enable(gl.SCISSOR_TEST);
-    gl.scissor(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+    const aspect_loc = gl.getUniformLocation(program,"aspect");
+    const mouse_loc = gl.getUniformLocation(program,"mouse");
     
     let timer = 0;
     let frames = 0;
+    let last_t = null;
     (function loop(t) {
+        cm.updateSize();
         if (last_t !== null) {
             const dt = t-last_t;
             timer += dt;
@@ -79,6 +129,8 @@ function start(canvas,gl) {
             }
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
             gl.uniform1f(t_loc,t*0.01);
+            gl.uniform1f(aspect_loc,cm.aspectRatio);
+            gl.uniform2f(mouse_loc,cm.mouse_x,cm.mouse_y);
             gl.drawArraysInstanced(gl.TRIANGLE_STRIP,0,4,10000);
         }
         last_t = t;
@@ -86,14 +138,10 @@ function start(canvas,gl) {
     })(null);
 }
 
-const canvas = document.getElementById("canvas");
-const gl = canvas.getContext("webgl2");
-
-if (gl !== null) {
-    start(canvas,gl);
-} else {
-    console.log("Can't get context.");
-}
+const cm = new CanvasManager(document.getElementById("canvas-container"));
+if (cm.gl !== null) {
+    start(cm)
+};
 
 </script>
 
