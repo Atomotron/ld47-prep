@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <script src="math32.js"></script>
+</head>
+<body>
+<h1>A web page with javascript on it</h1>
+
+<script>
+
+// One-line comments start with `//` instead of #
+
+/* Javascript also has
+multi-line comments
+that start with /*
+and end with */
+
+// print("Javascript goes here!")
+console.log("Javascript goes here!");
+
+if (1 === 2) {
+    console.log("Math is fake, you were tricked.");
+}
+
+const x = 5;
+console.log(x);
+
+let y = 5;
+y = 6;
+console.log(y);
+y = "What about for strings";
+
+function name(argument,default_argument = 5) {
+    return default_argument + argument;
+}
+console.log(name(10)); // prints 15
+
+class F {
+    // __init__(self,a):
+    constructor(a) {
+        this.a = a;
+    }
+    do_something() {
+        console.log(this.a + 5);
+    }
+}
+
+// class C(F):
+class C extends F {
+    do_something2() {
+        console.log(this.a + 15);
+    }
+}
+
+// f = F()
+const f = new F(100);
+
+const c = new C(100);
+c.do_something2();
+c.do_something();
+
+let list = [];
+list.push(10); // list.append(10)
+console.log(list[0]);
+
+// Dictionaries are a bit worse...
+const dict1 = {
+    'a': 10,
+    'b': 12,
+}
+dict1['c'] = 13;
+console.log(dict1['a'],dict2['a']);
+
+let m = new Map();
+m.set("a",10);
+m.set("b",12);
+m.set("c",13);
+console.log(m.get("a"),m.get("b"));
+
+// Like python, there are sets
+let set = new Set(); // s = set()
+set.add("100");
+set.delete("100");
+
+// for i in range(0,9): print(i)
+for (let i=0; i < 10; ++i) {
+    console.log(i);
+}
+
+// for i in list:
+for (const i of list) {
+    console.log(i);
+}
+
+// for k,v in dict1.entries():
+for (const [key,value] of m) {
+    console.log(key,value);
+}
+
+</script>
+
+</body>
+</html>
