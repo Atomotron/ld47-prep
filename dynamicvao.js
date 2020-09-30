@@ -89,6 +89,7 @@ class DynamicVAO {
         this.object_indices = new Map();
         this.size = size;
         this.head = 0;
+        this.refresh_requested = false;
         // Find locations in program
         this.vertex_loc = gl.getAttribLocation(program,'vertex');
         if (this.vertex_loc < 0) {
@@ -195,12 +196,14 @@ class DynamicVAO {
     acquire(gl) {
         if (this.recycled_objects.length > 0) {
             // We can re-use a recycled object.
+            this.request_refresh();
             return this.recycled_objects.pop();
         } else {
             if (this.head < this.size) {
                 // Create a new object
                 const index = this.head;
                 this.head += 1;
+                this.request_refresh();
                 return this.make_object(index);
             } else {
                 // Out of space!
@@ -214,11 +217,20 @@ class DynamicVAO {
             object[name].zeroeq(); // Zero out relenquished objects
         }
         this.recycled_objects.push(object);
+        this.request_refresh();
+    }
+    // Flag all objects for data refresh, including static ones.
+    request_refresh() {
+        this.refresh_requested = true;
     }
     draw(gl) {
         for (const [name,dvbo] of this.DVBOs) {
+            if (this.refresh_requested) {
+                dvbo.must_update = true;
+            }
             dvbo.prepare(gl);
         }
+        this.refresh_requested = false;
         gl.bindVertexArray(this.vao);
         gl.drawArraysInstanced(gl.TRIANGLE_STRIP,0,4,this.head);
     }
