@@ -39,14 +39,6 @@ class AbstractScalar extends ArrayFloats {
     toString() {return this.a[0].toString();}
     // Assigns a value, taking a JS Number instead of a Scalar like Eq would.
     set(x=0.0) {this.a[0] = x; return this;}
-    
-    /** Operations (Constant) **/
-    static Zero(out) {
-        out.a[0] = 0;
-        return out;
-    }
-    zeroeq() {return Scalar.Zero(this);}
-    zero() {return this.clone().zeroeq();} // Redundant but here for completeness
 }
 /* Scalar with allocating constructor. */
 class Scalar extends AbstractScalar {
