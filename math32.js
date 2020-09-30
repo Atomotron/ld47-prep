@@ -38,7 +38,7 @@ class AbstractScalar extends ArrayFloats {
     valueOf() {return this.a[0];}
     toString() {return this.a[0].toString();}
     // Assigns a value, taking a JS Number instead of a Scalar like Eq would.
-    set(x) {this.a[0] = x;}
+    set(x=0.0) {this.a[0] = x; return this;}
     
     /** Operations (Constant) **/
     static Zero(out) {
@@ -52,8 +52,8 @@ class AbstractScalar extends ArrayFloats {
 class Scalar extends AbstractScalar {
     constructor(x=0.0) {
         let n = new Float32Array(1);
-        n[0] = x;
         super(n);
+        this.set(x);
     }
 }
 /*
@@ -71,7 +71,7 @@ class AbstractVec extends ArrayFloats {
     valueOf() {return [this.a[0],this.a[1]];}
     toString() {return this.valueOf().toString();}
     // Assigns a value, but taking JS numbers instead of a Vec like Eq would.
-    set(x,y) {this.a[0]=x;this.a[1]=y;}
+    set(x=0.0,y=0.0) {this.a[0]=x;this.a[1]=y; return this;}
     
     /** Constructive setters **/
     static Polar(out,r,theta) {
@@ -204,9 +204,8 @@ class AbstractVec extends ArrayFloats {
 class Vec extends AbstractVec {
     constructor(x=0.0,y=0.0) {
         let a = new Float32Array(2);
-        a[0] = x; // Converts f64 to f32
-        a[1] = y; // Converts f64 to f32
         super(a);
+        this.set(x,y);
     }
 }
 
@@ -253,6 +252,7 @@ class Vec extends AbstractVec {
         a[0] = xx; a[1] = xy; a[2] = 0.0;
         a[3] = yx; a[4] = yy; a[5] = 0.0;
         a[6] = x;  a[7] = y;  a[8] = 1.0;
+        return this;
     }
     
     /** Constructive setters **/
