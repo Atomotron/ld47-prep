@@ -21,9 +21,9 @@ class CanvasManager {
         });
         
         // Create gl context
-        this.gl = this.canvas.getContext("webgl2");
+        this.gl = this.canvas.getContext("webgl2",{ alpha: false });
         if (this.gl === null) {
-            alert("Could not get WebGL2 context.\nPlease use a modern browser like Firefox.");
+            alert("Could not get WebGL2 context.");
         } else {
             this.setupContext();
         }
@@ -31,9 +31,8 @@ class CanvasManager {
     setupContext() {
         const gl = this.gl;
         gl.clearColor(0.5, 0.5, 0.5, 1.0);
-        gl.enable(gl.DEPTH_TEST);
-        gl.depthFunc(gl.GREATER);
-        gl.clearDepth(0.0);
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
         gl.enable(gl.SCISSOR_TEST);
         this.updateSize();
     }

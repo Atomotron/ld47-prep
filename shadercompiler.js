@@ -22,6 +22,36 @@ class ShaderCompiler {
             this.loadShader(gl,vname,vshaders,gl.VERTEX_SHADER);
             this.loadShader(gl,fname,fshaders,gl.FRAGMENT_SHADER);
         }
+        // Set up sprite shader: a built-in special case.
+        programs.set('sprite',["builtin-sprite-v","builtin-sprite-f"]);
+        vshaders.set("builtin-sprite-v",`#version 300 es
+            in vec2 vertex;
+            in float z;
+            in vec3 model_x;
+            in vec3 model_y;
+            in vec3 model_z;
+            in vec3 uv_x;
+            in vec3 uv_y;
+            in vec3 uv_z;
+            out vec2 uv;
+            uniform mat3 view;
+
+            void main() {
+                mat3 model = mat3(model_x,model_y,model_z);
+                vec2 view_pos = (view * (model * vec3(vertex,1.0))).xy;
+                gl_Position = vec4(view_pos,z+0.5,1.0);
+                uv = (mat3(uv_x,uv_y,uv_z) * vec3(vertex,1.0)).xy;
+            }`);
+        fshaders.set("builtin-sprite-f",`#version 300 es
+            precision highp float;
+            out vec4 color;
+            in vec2 uv;
+
+            uniform sampler2D spritesheet;
+
+            void main() {
+                color = texture(spritesheet,uv);
+            }`);    
         // Compile shaders
         this.compileShaders(gl,vshaders,gl.VERTEX_SHADER);
         this.compileShaders(gl,fshaders,gl.FRAGMENT_SHADER);

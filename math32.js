@@ -257,6 +257,15 @@ class Vec extends AbstractVec {
     }
     translationeq(dx,dy) {return Mat.Translation(this,dx,dy);}
     
+    /** Transformations **/
+    static Translate(out,dx,dy) {
+        const a = out.a;
+        a[6] = a[6] + dx;
+        a[7] = a[7] + dy;
+        return out;
+    }
+    translateq(dx,dy) {return Mat.Translate(this,dx,dy);}
+    
     /** Operators (Binary, Matrix-Valued) **/
     // Scalar multiplication
     static Mul(out,x,y_scalar) {
@@ -343,7 +352,9 @@ class Vec extends AbstractVec {
             let b3 = -a[3]; let b4 = a[0];
             let b6 = Math.fround(a[3]*a[7]) - Math.fround(a[4]*a[6]); 
             let b7 = Math.fround(a[1]*a[6]) - Math.fround(a[0]*a[7]); 
-            out.set(b0,b1, b3,b4, b6,b7);
+            //out.set(b0,b1, b3,b4, b6,b7);
+            const b = out.a;
+            b[0]=b0;b[1]=b1; b[3]=b3;b[4]=b4; b[6]=b6;b[7]=b7;
             // Then, divide by the determinant to arrive at the inverse
             out.muleq(Math.fround(1 / det));
         }
@@ -390,7 +401,7 @@ function run_math32_tests() {
     assert_eq(''+x,''+move_inv.transform(move.transform(x))); // x = AA^-1 x
     assert_eq(''+a.compose(a.inv()),''+new Mat()); // AA^-1 = I
     assert_eq(''+b.compose(b.inv()),''+new Mat()); // BB^-1 = I
-
+    
     // Algebra
     assert_eq( // +
      ''+(a.add(b)).transform(x),

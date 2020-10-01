@@ -81,9 +81,38 @@ class MatDVBO extends DVBO {
     }
 }
 
+/*
+ * A vertex array object that contains only square vertices.
+ */ 
+class SimpleVAO {
+    constructor(gl,program,square_vbo) {
+        this.square_vbo = square_vbo;
+        this.vertex_loc = gl.getAttribLocation(program,'vertex');
+        this.construct(gl);
+    }
+    construct(gl) {
+        this.vao = gl.createVertexArray();
+        gl.bindVertexArray(this.vao);
+        gl.bindBuffer(gl.ARRAY_BUFFER,this.square_vbo);
+        gl.vertexAttribPointer(this.vertex_loc, 2, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(this.vertex_loc);
+    }
+    delete(gl) {
+        gl.deleteVertexArray(this.vao);
+    }
+    draw(gl) {
+        gl.bindVertexArray(this.vao);
+        gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+    }
+}
+
+/*
+ * A pool of index elements for instanced sprite drawing.
+ */ 
 class DynamicVAO {
     constructor(gl,program,square_vbo,channels,size=1) {
         this.square_vbo = square_vbo;
+        this.vertex_loc = gl.getAttribLocation(program,'vertex');
         this.channels = channels;
         this.recycled_objects = [];
         this.object_indices = new Map();
@@ -91,7 +120,6 @@ class DynamicVAO {
         this.head = 0;
         this.refresh_requested = false;
         // Find locations in program
-        this.vertex_loc = gl.getAttribLocation(program,'vertex');
         if (this.vertex_loc < 0) {
             console.error("Shader missing the absolutely essential 'vertex' location.");
         }
@@ -110,11 +138,12 @@ class DynamicVAO {
             } else if (channel.type === "mat") {
                 const loc_x = gl.getAttribLocation(program,name+'_x');
                 const loc_y = gl.getAttribLocation(program,name+'_y');
+                const loc_z = gl.getAttribLocation(program,name+'_z');
                 if (loc_x < 0 || loc_y < 0) {
-                    console.error("Could not find attribute",name,"because we missed",loc_x<0 ? name+'_x':'',loc_y<0 ? name+'_y':'');
+                    console.error("Could not find attribute",name,"because we missed",loc_x<0 ? name+'_x':'',loc_y<0 ? name+'_y':'',loc_z<0 ? name+'_z':'');
                     this.malformed_names.add(name);
                 } else {
-                    this.locations.set(name,[loc_x,loc_y]);
+                    this.locations.set(name,[loc_x,loc_y,loc_z]);
                 }
             } else {
                 this.malformed_names.add(name);
@@ -159,12 +188,14 @@ class DynamicVAO {
                 gl.vertexAttribPointer(loc[1], 3, gl.FLOAT, false, 4*9, 4*3);
                 gl.enableVertexAttribArray(loc[1]);
                 gl.vertexAttribDivisor(loc[1], 1);
+                gl.vertexAttribPointer(loc[2], 3, gl.FLOAT, false, 4*9, 4*6);
+                gl.enableVertexAttribArray(loc[2]);
+                gl.vertexAttribDivisor(loc[2], 1);
             }
         }
         this.size = size;
     }
     expand(gl,size) {
-        console.log(size);
         this.delete(gl);
         const old_DVBOs = this.DVBOs;
         this.construct(gl,size);
@@ -223,7 +254,7 @@ class DynamicVAO {
     request_refresh() {
         this.refresh_requested = true;
     }
-    draw(gl) {
+    prepare(gl) {
         for (const [name,dvbo] of this.DVBOs) {
             if (this.refresh_requested) {
                 dvbo.must_update = true;
@@ -231,6 +262,8 @@ class DynamicVAO {
             dvbo.prepare(gl);
         }
         this.refresh_requested = false;
+    }
+    draw(gl) {
         gl.bindVertexArray(this.vao);
         gl.drawArraysInstanced(gl.TRIANGLE_STRIP,0,4,this.head);
     }

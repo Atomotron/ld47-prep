@@ -4,126 +4,111 @@
     <meta charset="utf-8"/>
     <script src="math32.js"></script>
     <script src="shadercompiler.js"></script>
+    <script src="imageloader.js"></script>
+    <script src="sounds.js"></script>
     <script src="canvasmanager.js"></script>
     <script src="dynamicvao.js"></script>
+    <script src="scene.js"></script>
+    <script src="engine.js"></script>
 </head>
 <body>
 <h1>Basic Tests: WebGL</h1>
-<div id="fps">Loading...</div>
-
 <div id="canvas-container" style="height:70vh; width:100%"></div>
 
-<script id="shader-v" type="x-shader/x-vertex">#version 300 es
-out vec3 vcolor;
+<script id="shader-background-v" type="x-shader/x-vertex">#version 300 es
 in vec2 vertex;
-in float s;
-uniform float t;
-uniform mat3 view;
+out vec2 world_coord;
+uniform mat3 inverse_view;
 
 void main() {
-    float u = float(gl_InstanceID)/10000.0;
-    //mat3 model = transpose(mat3(model_x,model_y,vec3(0.0,0.0,1.0)));
-    mat2 m = mat2(
-        sin(u*t), cos(u*t),
-        -cos(u*t), sin(u*t)
-    )*0.025;
-    vec2 pos = m*vertex + vec2(3.0*s,s*sin(s*10.0+0.1*t));
-    gl_Position = vec4(view * vec3(pos,1.0),1.0);
-    
-    vcolor = vec3(vertex*0.5+0.5,0.5);
+    gl_Position = vec4(vertex,0.0,1.0);
+    world_coord = (inverse_view * vec3(vertex,1.0)).xy;
 }
 </script>
 
-<script id="shader-f" type="x-shader/x-fragment">#version 300 es
+<script id="shader-background-f" type="x-shader/x-fragment">#version 300 es
 precision highp float;
 out vec4 color;
-in vec3 vcolor;
+in vec2 world_coord;
 
 void main() {
-    color = vec4(vcolor, 1.0);
+    color = vec4(world_coord*0.1+0.5, 0.5, 1.0);
 }
 </script>
 <script>
 
-function start(canvasManager) {
-    const gl = canvasManager.gl;
-    const sc = new ShaderCompiler(gl,
-        {'shader':['shader-v','shader-f']},
-    );
-    for (const e of sc.errors) {
-        console.log(e.toString());
+/*
+ * A custom render pass that uses the custom shaders
+ */
+class BackgroundPass extends RenderPass {
+    constructor(gl,scene,program) {
+        super(gl,program);
+        this.vao = new SimpleVAO(gl,program,scene.square_vao);
+        this.inverse_view_loc = gl.getUniformLocation(program,"inverse_view");
+        this.inverse_view = new Mat();
     }
-    const program = sc.programs.get('shader');
-    //const uniforms = new Uniforms(sc.uniformProfiles.get('shader'));
-    
-    // Initial gl setup
-    gl.useProgram(program);
-    const t_loc = gl.getUniformLocation(program,"t");
-    const view_loc = gl.getUniformLocation(program,"view");
-    const view = new Mat();
-    
-    // VAO
-    const vao = gl.createVertexArray();
-    gl.bindVertexArray(vao);
-    
-    // Setting up square geometry to get around the,
-    // "drawArraysInstanced: One active vertex attrib (if any are active) must have a divisor of 0."
-    // bug.
-    const square = new Float32Array([
-        -1.0,-1.0,
-        1.0,-1.0,
-        -1.0,1.0,
-        1.0,1.0,
-    ]);    
-    const square_buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, square_buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, square, gl.STATIC_DRAW);
-    
-    const dvao = new DynamicVAO(gl,program,square_buffer,{
-        "s":{'type':'scalar','dynamic':true},
-    },1);
-    //const object1 = dvao.acquire(gl);
-    const objects = [];
-    for (let i=0; i<1000; ++i) {
-        const o = dvao.acquire(gl);
-        o.s.set(i/1000);
-        objects.push(o);
+    update(scene,dt) {
+        Mat.Inv(this.inverse_view,scene.view);
     }
-    console.log(dvao);
-    let timer = 0;
-    let frames = 0;
-    let last_t = null;
-    (function loop(t) {
-        cm.updateSize();
-        if (last_t !== null) {
-            const dt = t-last_t;
-            timer += dt;
-            frames += 1;
-            if (timer > 100) {
-                const fps = 1000*frames/timer;
-                document.getElementById("fps").textContent = fps.toFixed(3) + " fps";
-                frames = 0;
-                timer = 0;
-            }
-            view.translationeq(cm.mouse_x,cm.mouse_y);
-            view.a[0] = 1/cm.aspectRatio;
-            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-            gl.uniform1f(t_loc,t*0.01);
-            gl.uniformMatrix3fv(view_loc,false,view.a);
-            let i = Math.floor(1000*Math.random());
-            objects[i].s.set(-objects[i].s.a[0]);
-            dvao.draw(gl);
-            //gl.drawArraysInstanced(gl.TRIANGLE_STRIP,0,4,N_INSTANCES);
-        }
-        last_t = t;
-        window.requestAnimationFrame(loop);
-    })(null);
+    draw(gl) {
+        gl.useProgram(this.program);
+        gl.uniformMatrix3fv(this.inverse_view_loc,false,this.inverse_view.a);
+        this.vao.draw(gl);
+    }
 }
 
-const cm = new CanvasManager(document.getElementById("canvas-container"));
-if (cm.gl !== null) {
-    start(cm)
-};
+class DemoEngine extends Engine {
+    setup() {
+        // Background pass
+        this.backgroundpass = new BackgroundPass(this.gl,
+            this.scene,
+            this.sc.programs.get('background')
+        );
+        this.scene.addPass(this.backgroundpass);
+        // Sprite pass
+        if (this.il.textures.has('spritesheet')) {
+            this.spritepass = new SpritePass(this.gl,
+                this.scene,
+                this.sc.programs.get('sprite'),
+                this.il.textures.get('spritesheet'),
+            );
+            this.scene.addPass(this.spritepass);
+        }
+        // Make some sprites
+        const sprites = [];
+        for (let i=0; i<1; ++i) {
+            sprites.push(this.spritepass.dvao.acquire(this.gl));
+        }
+        for (const sprite of sprites) {
+            sprite.model.a[6] += Math.random()*0.02-0.01;
+            sprite.model.a[7] += Math.random()*0.02-0.01;
+            sprite.uv.a[0] += Math.random()*0.02-0.01;
+            sprite.uv.a[1] += Math.random()*0.02-0.01;
+            sprite.uv.a[3] += Math.random()*0.02;
+            sprite.uv.a[4] += Math.random()*0.02-0.01;
+        }
+    }
+    update(dt) {
+        this.scene.view.translationeq(this.cm.mouse_x,this.cm.mouse_y);
+        this.scene.view.a[0] = 1/this.cm.aspectRatio;
+    }
+}
+
+const engine = new DemoEngine(
+    canvas_container = document.getElementById("canvas-container"),
+    shader_programs = {
+        background:['shader-background-v','shader-background-f']
+    },
+    images = {
+        spritesheet:'texture.png'
+    },
+    music = {
+        "negentropy": "sound/Chad_Crouch_-_Negentropy.mp3"
+    },
+    sfx = {
+        "hit": "sound/hit.mp3"
+    },
+);
 
 </script>
 
