@@ -20,6 +20,11 @@ class CanvasManager {
             this.mouse_y = 1.0 - 2.0*y/rect.height;
         });
         
+        // Set up keyboard map
+        this.pressed = new Set();
+        window.addEventListener('keydown',(e) => {this.pressed.add(e.code)});
+        window.addEventListener('keyup',(e) => this.pressed.delete(e.code));
+        
         // Create gl context
         this.gl = this.canvas.getContext("webgl2",{
          alpha: false,
@@ -33,6 +38,9 @@ class CanvasManager {
         } else {
             this.setupContext();
         }
+    }
+    isPressed(keycode) {
+        return this.pressed.has(keycode);
     }
     setupContext() {
         const gl = this.gl;

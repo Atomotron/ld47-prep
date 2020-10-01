@@ -96,9 +96,55 @@ class Robot extends Sprite {
             "BlueBot/bluebot2.png",
         ];
         this.frame = 0;
-        this.frame_age = 0;
+        this.frame_age = 0;    
+        this.engine.cm.canvas.addEventListener('click',
+            (e) => {
+                const mouse_pos = new Vec(this.engine.cm.mouse_x,this.engine.cm.mouse_y);
+                const velocity = mouse_pos.sub(this.pos).normeq().muleq(0.003);
+                new Wave(this.engine,this.pos,velocity);
+            }
+        ); 
     }
     tick(dt) {
+        let moving = false;
+        if (this.engine.cm.isPressed("KeyA")) {
+            this.pos.addeq(new Vec(-0.1,0.0));
+            this.mirror = false;
+            moving = true;
+        }
+        if (this.engine.cm.isPressed("KeyD")) {
+            this.pos.addeq(new Vec(0.1,0.0));
+            this.mirror = true;
+            moving = true;
+        }
+        this.setImage(this.frames[this.frame]);
+        this.frame_age += dt;
+        if ((moving || this.frame !== 0) && this.frame_age > 100) {
+            this.frame = (this.frame + 1) % this.frames.length;
+            this.frame_age = 0;
+        }
+    }
+}
+
+class Wave extends Sprite {
+    constructor(engine,pos,vel) {
+        super(engine,"BlueBot/bluebot1.png");
+        this.pos.eq(pos);
+        this.vel = vel;
+        this.frames = [
+            "OrangeWave/1.png",
+            "OrangeWave/2.png",
+            "OrangeWave/3.png",
+            "OrangeWave/4.png",
+            "OrangeWave/3.png",
+            "OrangeWave/2.png",
+        ];
+        this.angle = Math.atan2(vel.a[0],vel.a[1]);
+        this.frame = 0;
+        this.frame_age = 0;    
+    }
+    tick(dt) {
+        this.pos.addeq(this.vel.mul(dt));
         this.setImage(this.frames[this.frame]);
         this.frame_age += dt;
         if (this.frame_age > 100) {
