@@ -23,7 +23,7 @@ class ImageLoader {
                         const texture = gl.createTexture();
                         gl.bindTexture(gl.TEXTURE_2D, texture);
                         gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
-                        gl.texStorage2D(gl.TEXTURE_2D, 1, gl.RGBA8, imagebitmap.width, imagebitmap.height);
+                        gl.texStorage2D(gl.TEXTURE_2D, 4, gl.RGBA8, imagebitmap.width, imagebitmap.height);
                         gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, imagebitmap.width, imagebitmap.height, gl.RGBA, gl.UNSIGNED_BYTE, imagebitmap);
                         gl.generateMipmap(gl.TEXTURE_2D);
                         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);

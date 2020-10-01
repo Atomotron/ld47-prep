@@ -21,7 +21,13 @@ class CanvasManager {
         });
         
         // Create gl context
-        this.gl = this.canvas.getContext("webgl2",{ alpha: false });
+        this.gl = this.canvas.getContext("webgl2",{
+         alpha: false,
+         desynchronized: true,
+         depth: false,
+         failIfMajorPerformanceCaveat: true,
+         powerPreference: "high-performance",
+        });
         if (this.gl === null) {
             alert("Could not get WebGL2 context.");
         } else {
