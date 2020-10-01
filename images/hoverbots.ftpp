@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "version": "0.6.6"
+  },
+  "savePath": "",
+  "images": [
+    {
+      "name": "YellowBot.png",
+      "path": "Y:/Art/testgame/YellowBot.png",
+      "folder": ""
+    }
+  ],
+  "folders": [
+    "Y:/Art/testgame/BlueBot",
+    "Y:/Art/testgame/BlueWave",
+    "Y:/Art/testgame/OrangeBot",
+    "Y:/Art/testgame/OrangeWave",
+    "Y:/Art/testgame/RedBeam",
+    "Y:/Art/testgame/YellowWave"
+  ],
+  "packOptions": {
+    "textureName": "hoverbots",
+    "textureFormat": "png",
+    "removeFileExtension": false,
+    "prependFolderName": false,
+    "base64Export": false,
+    "tinify": false,
+    "tinifyKey": "",
+    "scale": 1,
+    "disableSmoothing": false,
+    "filter": "none",
+    "exporter": "JSON (hash)",
+    "fileName": "pack-result",
+    "savePath": "",
+    "width": 4096,
+    "height": 4096,
+    "fixedSize": false,
+    "powerOfTwo": false,
+    "padding": 0,
+    "extrude": 0,
+    "allowRotation": false,
+    "allowTrim": true,
+    "trimMode": "trim",
+    "alphaThreshold": "0",
+    "detectIdentical": true,
+    "packer": "OptimalPacker",
+    "packerMethod": "Automatic"
+  }
+}
