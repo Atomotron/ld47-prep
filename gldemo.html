@@ -68,19 +68,36 @@ class DemoEngine extends Engine {
         );
         this.scene.addPass(this.backgroundpass,1.0);
         // Make some sprites
-        this.sprites = new Set();
+        /*this.sprites = new Set();
         for (const [name,tex_frame] of this.il.model_frames) {
             const s = new Sprite(this,name);
             s.angle = Math.PI * 2 * Math.random();
             s.scale = 0.5 + 0.5*Math.random();
             s.pos = new Vec(Math.random()*2-1, Math.random()*2-1);
             s.mirror = Math.random() > 0.5;
-        }
+        }*/
+        new Robot(this);
     }
     update(dt) {
         super.update(dt);
-        this.scene.view.translationeq(new Vec(this.cm.mouse_x,this.cm.mouse_y));
         this.scene.view.a[0] = 1/this.cm.aspectRatio;
+    }
+}
+
+class Robot extends Sprite {
+    constructor(engine) {
+        super(engine,"BlueBot/bluebot1.png");
+        this.frames = [
+            "BlueBot/bluebot1.png",
+            "BlueBot/bluebot2.png",
+            "BlueBot/bluebot3.png",
+            "BlueBot/bluebot4.png",
+        ];
+        this.frame = 0;
+    }
+    tick(dt) {
+        this.setImage(this.frames[this.frame]);
+        this.frame = (this.frame + 1) % this.frames.length;
     }
 }
 
@@ -102,6 +119,7 @@ const engine = new DemoEngine(
         "hit": "sound/hit.mp3"
     },
 );
+console.log(engine);
 
 </script>
 
