@@ -100,7 +100,7 @@ class Robot extends Sprite {
         this.engine.cm.canvas.addEventListener('click',
             (e) => {
                 const mouse_pos = new Vec(this.engine.cm.mouse_x,this.engine.cm.mouse_y);
-                const velocity = mouse_pos.sub(this.pos).normeq().muleq(0.003);
+                const velocity = this.engine.mouse_pos.sub(this.pos).normeq().muleq(0.003);
                 new Wave(this.engine,this.pos,velocity);
             }
         ); 

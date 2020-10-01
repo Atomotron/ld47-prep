@@ -36,6 +36,7 @@ class Engine {
     }
     start() {
         this.scene = new Scene(this.gl);
+        this.mouse_pos = new Vec();
         this.sprites = new Set();
         if (!this.il.textures.get('spritesheet')) {
             console.error("No spritesheet in image loader. Sprite creation won't work.");    
@@ -54,6 +55,8 @@ class Engine {
         const that = this;
         (function loop(t) {
             that.cm.updateSize();
+            const inverse_view = that.scene.view.inv();
+            that.mouse_pos.eq(inverse_view.transform(new Vec(that.cm.mouse_x,that.cm.mouse_y)));
             if (last_t !== null) {
                 const dt = t-last_t;
                 that.update(dt);
