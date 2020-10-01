@@ -119,7 +119,5 @@ class Sprite {
         this.data.model.composeq(this.translation);
     }
     // Meant to be overriden
-    tick(dt) {
-        this.angle += dt/1000;
-    }
+    tick(dt) {}
 }
