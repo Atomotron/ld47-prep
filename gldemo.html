@@ -92,12 +92,19 @@ class Robot extends Sprite {
             "BlueBot/bluebot2.png",
             "BlueBot/bluebot3.png",
             "BlueBot/bluebot4.png",
+            "BlueBot/bluebot3.png",
+            "BlueBot/bluebot2.png",
         ];
         this.frame = 0;
+        this.frame_age = 0;
     }
     tick(dt) {
         this.setImage(this.frames[this.frame]);
-        this.frame = (this.frame + 1) % this.frames.length;
+        this.frame_age += dt;
+        if (this.frame_age > 100) {
+            this.frame = (this.frame + 1) % this.frames.length;
+            this.frame_age = 0;
+        }
     }
 }
 
