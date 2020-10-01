@@ -74,6 +74,7 @@ class DemoEngine extends Engine {
             s.angle = Math.PI * 2 * Math.random();
             s.scale = 0.5 + 0.5*Math.random();
             s.pos = new Vec(Math.random()*2-1, Math.random()*2-1);
+            s.mirror = Math.random() > 0.5;
         }
     }
     update(dt) {

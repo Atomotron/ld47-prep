@@ -264,7 +264,15 @@ class Vec extends AbstractVec {
         return out;
     }
     rotationeq(theta) {return Mat.Rotation(this,theta);}    
-    
+    static Scaling(out,sx,sy) {
+        const a = out.a;
+        a[0] =  sx; a[1] = 0.0; a[2] = 0.0;
+        a[3] = 0.0; a[4] =  sy; a[5] = 0.0;
+        a[6] = 0.0; a[7] = 0.0; a[8] = 1.0;
+        return out;
+    }
+    scalingeq(sx,sy) {return Mat.Scaling(this,sx,sy);}   
+     
     // A matrix that transforms the standard -1...1 square to the given rect in texture coordinates
     static UnitToTexRect(out,x,y,w,h) {
         const a = out.a;

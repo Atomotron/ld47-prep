@@ -84,6 +84,7 @@ class Sprite {
         this.sprite_matrix = new Mat();
         this.rotation = new Mat();
         this.translation = new Mat();
+        this.scaling = new Mat();
         this.setImage(image);
         this.engine.sprites.add(this);
     }
@@ -106,9 +107,14 @@ class Sprite {
         // Set matrices from values
         this.rotation.rotationeq(this.angle);
         this.translation.translationeq(this.pos);
+        if (this.mirror) {
+            this.scaling.scalingeq(-this.scale,this.scale);
+        } else {
+            this.scaling.scalingeq(this.scale,this.scale);
+        }
         // Compute model matrix
         this.data.model.eq(this.sprite_matrix);
-        this.data.model.muleq(this.scale);
+        this.data.model.composeq(this.scaling);
         this.data.model.composeq(this.rotation);
         this.data.model.composeq(this.translation);
     }
