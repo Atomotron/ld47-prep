@@ -243,7 +243,7 @@ class DynamicVAO {
             }
         }
     }
-    relenquish(gl,object) {
+    relenquish(object) {
         for (const name in object) {
             object[name].zeroeq(); // Zero out relenquished objects
         }

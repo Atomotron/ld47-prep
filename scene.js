@@ -5,6 +5,7 @@ class Scene {
         this.view = view;
         this.time = 0;
         this.passes = [];
+        this.pass_depths = [];
         this.square_verts = new Float32Array([
             -1.0,-1.0,
             1.0,-1.0,
@@ -15,8 +16,13 @@ class Scene {
         gl.bindBuffer(gl.ARRAY_BUFFER, this.square_vao);
         gl.bufferData(gl.ARRAY_BUFFER, this.square_verts, gl.STATIC_DRAW);
     }
-    addPass(pass) {
-        this.passes.push(pass);
+    addPass(pass,depth=0.5) {
+        this.pass_depths.push([pass,depth]);
+        this.pass_depths.sort((a,b) => b[1]-a[1]); // Sort from deep to shallow
+        this.passes = [];
+        for (const [pass,depth] of this.pass_depths) {
+            this.passes.push(pass);
+        }
     }
     update(dt) {
         this.time += dt;
@@ -51,7 +57,6 @@ class SpritePass extends RenderPass{
         super(gl,program);
         this.texture = texture;
         this.dvao = new DynamicVAO(gl,program,scene.square_vao,{
-            z: {type:'scalar',dynamic:false},
             model: {type:'mat',dynamic:true},
             uv: {type:'mat',dynamic:true},
         },8);

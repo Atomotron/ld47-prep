@@ -26,7 +26,6 @@ class ShaderCompiler {
         programs.set('sprite',["builtin-sprite-v","builtin-sprite-f"]);
         vshaders.set("builtin-sprite-v",`#version 300 es
             in vec2 vertex;
-            in float z;
             in vec3 model_x;
             in vec3 model_y;
             in vec3 model_z;
@@ -39,7 +38,7 @@ class ShaderCompiler {
             void main() {
                 mat3 model = mat3(model_x,model_y,model_z);
                 vec2 view_pos = (view * (model * vec3(vertex,1.0))).xy;
-                gl_Position = vec4(view_pos,z+0.5,1.0);
+                gl_Position = vec4(view_pos,0.5,1.0);
                 uv = (mat3(uv_x,uv_y,uv_z) * vec3(vertex,1.0)).xy;
             }`);
         fshaders.set("builtin-sprite-f",`#version 300 es
@@ -50,7 +49,8 @@ class ShaderCompiler {
             uniform sampler2D spritesheet;
 
             void main() {
-                color = texture(spritesheet,uv);
+                vec4 tex = texture(spritesheet,uv);
+                color = tex;
             }`);    
         // Compile shaders
         this.compileShaders(gl,vshaders,gl.VERTEX_SHADER);

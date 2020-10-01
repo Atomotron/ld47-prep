@@ -110,7 +110,7 @@ class Sounds {
     }
     // Plays a bit of silence to enable audio. Meant to be attached to a user interaction event.
     unstick() {
-        const buffer = this.ctx.createBuffer(2, 1, audioCtx.sampleRate); // One sample of silence
+        const buffer = this.ctx.createBuffer(2, 1, this.ctx.sampleRate); // One sample of silence
         const source = this.ctx.createBufferSource();
         source.buffer = buffer;
         source.connect(this.ctx.destination);

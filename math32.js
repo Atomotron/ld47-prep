@@ -257,6 +257,20 @@ class Vec extends AbstractVec {
     }
     translationeq(dx,dy) {return Mat.Translation(this,dx,dy);}
     
+    // A matrix that transforms the standard -1...1 square to the given rect in texture coordinates
+    static UnitToTexRect(out,x,y,w,h) {
+        const a = out.a;
+        let center_x = x + 0.5*w;
+        let center_y = y + 0.5*h;
+        let scale_x = 0.5*w;
+        let scale_y = -0.5*h; // Textures have inverted y
+        a[0] = scale_x;  a[1] = 0.0;      a[2] = 0.0;
+        a[3] = 0.0;      a[4] = scale_y;  a[5] = 0.0;
+        a[6] = center_x; a[7] = center_y; a[8] = 1.0;
+        return out;
+    }
+    unittotexrecteq(x,y,w,h) {return Mat.UnitToTexRect(this,x,y,w,h);}
+
     /** Transformations **/
     static Translate(out,dx,dy) {
         const a = out.a;

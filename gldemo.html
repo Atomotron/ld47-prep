@@ -46,9 +46,11 @@ class BackgroundPass extends RenderPass {
         this.vao = new SimpleVAO(gl,program,scene.square_vao);
         this.inverse_view_loc = gl.getUniformLocation(program,"inverse_view");
         this.inverse_view = new Mat();
+        this.t = 0;
     }
     update(scene,dt) {
         Mat.Inv(this.inverse_view,scene.view);
+        this.t += dt;
     }
     draw(gl) {
         gl.useProgram(this.program);
@@ -64,31 +66,15 @@ class DemoEngine extends Engine {
             this.scene,
             this.sc.programs.get('background')
         );
-        this.scene.addPass(this.backgroundpass);
-        // Sprite pass
-        if (this.il.textures.has('spritesheet')) {
-            this.spritepass = new SpritePass(this.gl,
-                this.scene,
-                this.sc.programs.get('sprite'),
-                this.il.textures.get('spritesheet'),
-            );
-            this.scene.addPass(this.spritepass);
-        }
+        this.scene.addPass(this.backgroundpass,1.0);
         // Make some sprites
-        const sprites = [];
-        for (let i=0; i<1; ++i) {
-            sprites.push(this.spritepass.dvao.acquire(this.gl));
-        }
-        for (const sprite of sprites) {
-            sprite.model.a[6] += Math.random()*0.02-0.01;
-            sprite.model.a[7] += Math.random()*0.02-0.01;
-            sprite.uv.a[0] += Math.random()*0.02-0.01;
-            sprite.uv.a[1] += Math.random()*0.02-0.01;
-            sprite.uv.a[3] += Math.random()*0.02;
-            sprite.uv.a[4] += Math.random()*0.02-0.01;
+        this.sprites = new Set();
+        for (const [name,tex_frame] of this.il.model_frames) {
+            new Sprite(this,name);
         }
     }
     update(dt) {
+        super.update(dt);
         this.scene.view.translationeq(this.cm.mouse_x,this.cm.mouse_y);
         this.scene.view.a[0] = 1/this.cm.aspectRatio;
     }
@@ -100,7 +86,10 @@ const engine = new DemoEngine(
         background:['shader-background-v','shader-background-f']
     },
     images = {
-        spritesheet:'texture.png'
+        spritesheet:'images/hoverbots.png'
+    },    
+    frames = {
+        spritesheet:'images/hoverbots.json'
     },
     music = {
         "negentropy": "sound/Chad_Crouch_-_Negentropy.mp3"
