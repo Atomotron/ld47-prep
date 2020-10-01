@@ -248,14 +248,22 @@ class Vec extends AbstractVec {
     }
     
     /** Constructive setters **/
-    static Translation(out,dx,dy) {
+    static Translation(out,vec) {
         const a = out.a;
-        a[0] = 1.0; a[1] = 0.0; a[2] = 0.0;
-        a[3] = 0.0; a[4] = 1.0; a[5] = 0.0;
-        a[6] = dx;  a[7] = dy;  a[8] = 1.0;
+        a[0] =      1.0; a[1] =      0.0; a[2] = 0.0;
+        a[3] =      0.0; a[4] =      1.0; a[5] = 0.0;
+        a[6] = vec.a[0]; a[7] = vec.a[1]; a[8] = 1.0;
         return out;
     }
-    translationeq(dx,dy) {return Mat.Translation(this,dx,dy);}
+    translationeq(vec) {return Mat.Translation(this,vec);}
+    static Rotation(out,theta) {
+        const a = out.a;
+        a[0] = Math.cos(theta); a[1] = -Math.sin(theta); a[2] = 0.0;
+        a[3] = Math.sin(theta); a[4] =  Math.cos(theta); a[5] = 0.0;
+        a[6] =             0.0; a[7] =              0.0; a[8] = 1.0;
+        return out;
+    }
+    rotationeq(theta) {return Mat.Rotation(this,theta);}    
     
     // A matrix that transforms the standard -1...1 square to the given rect in texture coordinates
     static UnitToTexRect(out,x,y,w,h) {
@@ -328,7 +336,7 @@ class Vec extends AbstractVec {
         a[0]=a0;a[1]=a1;a[3]=a3;a[4]=a4;a[6]=a6;a[7]=a7;
         return out;
     }
-    composeq(x) {return Mat.Compose(this,this,x);}
+    composeq(x) {return Mat.Compose(this,x,this);}
     compose(x) {return this.clone().composeq(x);}
     
     /** Operators (Binary, Vector-Valued) **/

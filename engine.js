@@ -76,16 +76,44 @@ class Engine {
 class Sprite {
     constructor(engine,image=null) {
         this.engine = engine;
+        this.angle = 0;
+        this.scale = 1;
+        this.pos = new Vec();
+        this.mirror = false;
         this.data = engine.spritepass.dvao.acquire(engine.gl);
-        if (image !== null) {
-            this.data.model.eq(engine.il.model_frames.get(image));
-            this.data.uv.eq(engine.il.texture_frames.get(image));
-        }
+        this.sprite_matrix = new Mat();
+        this.rotation = new Mat();
+        this.translation = new Mat();
+        this.setImage(image);
         this.engine.sprites.add(this);
     }
     destroy() {
         this.engine.spritepass.dvao.relenquish(this.data);
         this.engine.sprites.delete(this);
     }
-    update(dt) {}
+    setImage(image) {
+        this.image = image;
+        if (image !== null) {
+            this.sprite_matrix.eq(engine.il.model_frames.get(image));
+            this.data.uv.eq(engine.il.texture_frames.get(image));
+        } else {
+            this.sprite_matrix.zeroeq();
+            this.data.uv.zeroeq();
+        }
+    }
+    update(dt) {
+        this.tick(dt);
+        // Set matrices from values
+        this.rotation.rotationeq(this.angle);
+        this.translation.translationeq(this.pos);
+        // Compute model matrix
+        this.data.model.eq(this.sprite_matrix);
+        this.data.model.muleq(this.scale);
+        this.data.model.composeq(this.rotation);
+        this.data.model.composeq(this.translation);
+    }
+    // Meant to be overriden
+    tick(dt) {
+        this.angle += dt/1000;
+    }
 }

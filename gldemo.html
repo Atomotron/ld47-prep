@@ -13,7 +13,7 @@
 </head>
 <body>
 <h1>Basic Tests: WebGL</h1>
-<div id="canvas-container" style="height:70vh; width:100%"></div>
+<div id="canvas-container" style="height:80vh; width:100%"></div>
 
 <script id="shader-background-v" type="x-shader/x-vertex">#version 300 es
 in vec2 vertex;
@@ -70,12 +70,15 @@ class DemoEngine extends Engine {
         // Make some sprites
         this.sprites = new Set();
         for (const [name,tex_frame] of this.il.model_frames) {
-            new Sprite(this,name);
+            const s = new Sprite(this,name);
+            s.angle = Math.PI * 2 * Math.random();
+            s.scale = 0.5 + 0.5*Math.random();
+            s.pos = new Vec(Math.random()*2-1, Math.random()*2-1);
         }
     }
     update(dt) {
         super.update(dt);
-        this.scene.view.translationeq(this.cm.mouse_x,this.cm.mouse_y);
+        this.scene.view.translationeq(new Vec(this.cm.mouse_x,this.cm.mouse_y));
         this.scene.view.a[0] = 1/this.cm.aspectRatio;
     }
 }
