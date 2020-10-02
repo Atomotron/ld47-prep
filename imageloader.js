@@ -18,7 +18,17 @@ class ImageLoader {
             request.open('GET',path,true);
             request.responseType = 'blob';
             request.onload = () => {
-                window.createImageBitmap(request.response).then(
+                // Safari polyfill thanks to https://gist.github.com/nektro/84654b5183ddd1ccb7489607239c982d
+                const cIB = window.createImageBitmap || async function(blob) {
+                    return new Promise((resolve,reject) => {
+                        let img = document.createElement('img');
+                        img.addEventListener('load', function() {
+                            resolve(this);
+                        });
+                        img.src = URL.createObjectURL(blob);
+                    });
+                }
+                cIB(request.response).then(
                     (imagebitmap) => {
                         const texture = gl.createTexture();
                         gl.bindTexture(gl.TEXTURE_2D, texture);

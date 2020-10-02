@@ -61,7 +61,7 @@ class Sounds {
         this.controllers = new Set(); // The set of active audio controls
         
         // Create audio context and master volume
-        this.ctx = new AudioContext();
+        this.ctx = new (window.AudioContext || window.webkitAudioContext)();
         this.master_volume = new GainNode(this.ctx);
         this.master_volume.connect(this.ctx.destination); 
         // Set up music, connecting them all to music volume.
