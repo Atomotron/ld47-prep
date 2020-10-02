@@ -12,7 +12,7 @@
     <script src="engine.js"></script>
 </head>
 <body>
-<h1>Basic Tests: WebGL</h1>
+<h1>David Bowie Fanfiction: WebGL</h1>
 <div id="canvas-container" style="height:80vh; width:100%"></div>
 
 <script id="shader-background-v" type="x-shader/x-vertex">#version 300 es
@@ -149,6 +149,18 @@ class Wave extends Sprite {
         this.frame_age = 0;    
     }
     tick(dt) {
+		if (this.pos.a[1]>1){
+			this.vel.a[1] = -this.vel.a[1];	
+		}
+		if (this.pos.a[1]<-1){
+			this.vel.a[1] = -this.vel.a[1];
+		}//handles y array
+		if (this.pos.a[0]>1){
+			this.vel.a[0] = -this.vel.a[0];	
+		}
+		if (this.pos.a[0]<-1){
+			this.vel.a[0] = -this.vel.a[0];
+		}//handles x array
         this.pos.addeq(this.vel.mul(dt));
         this.setImage(this.frames[this.frame]);
         this.frame_age += dt;
