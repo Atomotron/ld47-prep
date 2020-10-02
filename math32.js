@@ -39,6 +39,9 @@ class AbstractScalar extends ArrayFloats {
     toString() {return this.a[0].toString();}
     // Assigns a value, taking a JS Number instead of a Scalar like Eq would.
     set(x=0.0) {this.a[0] = x; return this;}
+    
+    get x() {return this.a[0];}
+    set x(value) {this.a[0] = value;}
 }
 /* Scalar with allocating constructor. */
 class Scalar extends AbstractScalar {
@@ -64,6 +67,11 @@ class AbstractVec extends ArrayFloats {
     toString() {return this.valueOf().toString();}
     // Assigns a value, but taking JS numbers instead of a Vec like Eq would.
     set(x=0.0,y=0.0) {this.a[0]=x;this.a[1]=y; return this;}
+    
+    get x() {return this.a[0];}
+    set x(value) {this.a[0] = value;}
+    get y() {return this.a[1];}
+    set y(value) {this.a[1] = value;}
     
     /** Constructive setters **/
     static Polar(out,r,theta) {
@@ -345,7 +353,7 @@ class Vec extends AbstractVec {
         return out;
     }
     composeq(x) {return Mat.Compose(this,x,this);}
-    compose(x) {return this.clone().composeq(x);}
+    compose(x) {return x.clone().composeq(this);}
     
     /** Operators (Binary, Vector-Valued) **/
     static Transform(out_vec,matrix,vector) {
