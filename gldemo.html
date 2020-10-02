@@ -152,7 +152,7 @@ class Wave extends Sprite {
         this.pos.addeq(this.vel.mul(dt));
         this.setImage(this.frames[this.frame]);
         this.frame_age += dt;
-        if (this.frame_age > 100) {
+        if (this.frame_age > 0.1) {
             this.frame = (this.frame + 1) % this.frames.length;
             this.frame_age = 0;
         }
