@@ -39,14 +39,6 @@ class AbstractScalar extends ArrayFloats {
     toString() {return this.a[0].toString();}
     // Assigns a value, taking a JS Number instead of a Scalar like Eq would.
     set(x=0.0) {this.a[0] = x; return this;}
-    
-    /** Operations (Constant) **/
-    static Zero(out) {
-        out.a[0] = 0;
-        return out;
-    }
-    zeroeq() {return Scalar.Zero(this);}
-    zero() {return this.clone().zeroeq();} // Redundant but here for completeness
 }
 /* Scalar with allocating constructor. */
 class Scalar extends AbstractScalar {
@@ -256,14 +248,53 @@ class Vec extends AbstractVec {
     }
     
     /** Constructive setters **/
-    static Translation(out,dx,dy) {
+    static Translation(out,vec) {
         const a = out.a;
-        a[0] = 1.0; a[1] = 0.0; a[2] = 0.0;
-        a[3] = 0.0; a[4] = 1.0; a[5] = 0.0;
-        a[6] = dx;  a[7] = dy;  a[8] = 1.0;
+        a[0] =      1.0; a[1] =      0.0; a[2] = 0.0;
+        a[3] =      0.0; a[4] =      1.0; a[5] = 0.0;
+        a[6] = vec.a[0]; a[7] = vec.a[1]; a[8] = 1.0;
         return out;
     }
-    translationeq(dx,dy) {return Mat.Translation(this,dx,dy);}
+    translationeq(vec) {return Mat.Translation(this,vec);}
+    static Rotation(out,theta) {
+        const a = out.a;
+        a[0] = Math.cos(theta); a[1] = -Math.sin(theta); a[2] = 0.0;
+        a[3] = Math.sin(theta); a[4] =  Math.cos(theta); a[5] = 0.0;
+        a[6] =             0.0; a[7] =              0.0; a[8] = 1.0;
+        return out;
+    }
+    rotationeq(theta) {return Mat.Rotation(this,theta);}    
+    static Scaling(out,sx,sy) {
+        const a = out.a;
+        a[0] =  sx; a[1] = 0.0; a[2] = 0.0;
+        a[3] = 0.0; a[4] =  sy; a[5] = 0.0;
+        a[6] = 0.0; a[7] = 0.0; a[8] = 1.0;
+        return out;
+    }
+    scalingeq(sx,sy) {return Mat.Scaling(this,sx,sy);}   
+     
+    // A matrix that transforms the standard -1...1 square to the given rect in texture coordinates
+    static UnitToTexRect(out,x,y,w,h) {
+        const a = out.a;
+        let center_x = x + 0.5*w;
+        let center_y = y + 0.5*h;
+        let scale_x = 0.5*w;
+        let scale_y = -0.5*h; // Textures have inverted y
+        a[0] = scale_x;  a[1] = 0.0;      a[2] = 0.0;
+        a[3] = 0.0;      a[4] = scale_y;  a[5] = 0.0;
+        a[6] = center_x; a[7] = center_y; a[8] = 1.0;
+        return out;
+    }
+    unittotexrecteq(x,y,w,h) {return Mat.UnitToTexRect(this,x,y,w,h);}
+
+    /** Transformations **/
+    static Translate(out,dx,dy) {
+        const a = out.a;
+        a[6] = a[6] + dx;
+        a[7] = a[7] + dy;
+        return out;
+    }
+    translateq(dx,dy) {return Mat.Translate(this,dx,dy);}
     
     /** Operators (Binary, Matrix-Valued) **/
     // Scalar multiplication
@@ -313,7 +344,7 @@ class Vec extends AbstractVec {
         a[0]=a0;a[1]=a1;a[3]=a3;a[4]=a4;a[6]=a6;a[7]=a7;
         return out;
     }
-    composeq(x) {return Mat.Compose(this,this,x);}
+    composeq(x) {return Mat.Compose(this,x,this);}
     compose(x) {return this.clone().composeq(x);}
     
     /** Operators (Binary, Vector-Valued) **/
@@ -351,7 +382,9 @@ class Vec extends AbstractVec {
             let b3 = -a[3]; let b4 = a[0];
             let b6 = Math.fround(a[3]*a[7]) - Math.fround(a[4]*a[6]); 
             let b7 = Math.fround(a[1]*a[6]) - Math.fround(a[0]*a[7]); 
-            out.set(b0,b1, b3,b4, b6,b7);
+            //out.set(b0,b1, b3,b4, b6,b7);
+            const b = out.a;
+            b[0]=b0;b[1]=b1; b[3]=b3;b[4]=b4; b[6]=b6;b[7]=b7;
             // Then, divide by the determinant to arrive at the inverse
             out.muleq(Math.fround(1 / det));
         }
@@ -398,7 +431,7 @@ function run_math32_tests() {
     assert_eq(''+x,''+move_inv.transform(move.transform(x))); // x = AA^-1 x
     assert_eq(''+a.compose(a.inv()),''+new Mat()); // AA^-1 = I
     assert_eq(''+b.compose(b.inv()),''+new Mat()); // BB^-1 = I
-
+    
     // Algebra
     assert_eq( // +
      ''+(a.add(b)).transform(x),

@@ -43,10 +43,7 @@ class ExpRampController {
  */
 class Sounds {
     // Takes `music_paths` and `sound_paths`, which should be maps from resource name to resource path.
-    // The constructor can accept either objects {} or maps. The callback will be called once every
-    // time a resource is loaded, with this class passed as an argument. It can check for completion
-    // by "res.countdown === 0" and it can get a percent completion with 100-100*res.count/res.countdown.
-    // The callback will be called as soon as loading starts, at 0% complete. That would be a good time
+    // The constructor can accept either objects {} or maps. The callback will be called once everything is loaded.
     // to set up the loading bar element.
     constructor(music_paths={}, sound_paths={}, callback = null) {
         // First, convert the arguments to maps
@@ -82,7 +79,6 @@ class Sounds {
         const that = this; // Useful for callbacks
         this.count = this.sound_paths.size + this.music_paths.size;
         this.countdown = this.count;
-        if (this.callback !== null) this.callback(this); // Zero-percent callback.
         // Load (more like create, really) music elements
         for (const [name,path] of this.music_paths) {
             const element = new Audio(path);
@@ -93,7 +89,7 @@ class Sounds {
                 this.music_track_volumes.set(name,volume);
                 this.music.set(name,element);
                 this.countdown -= 1;
-                if (this.callback !== null) this.callback(that);
+                if (this.countdown === 0 && this.callback !== null) this.callback(that);
             });
         }
         // Load sounds
@@ -106,11 +102,19 @@ class Sounds {
                 this.ctx.decodeAudioData(request.response, (decompressed_buffer) => {
                     that.sound.set(name,decompressed_buffer);
                     that.countdown -= 1;
-                    if (that.callback !== null) this.callback(that);
+                    if (this.countdown === 0 && this.callback !== null) this.callback(that);
                 });
             };
             request.send();
         }
+    }
+    // Plays a bit of silence to enable audio. Meant to be attached to a user interaction event.
+    unstick() {
+        const buffer = this.ctx.createBuffer(2, 1, this.ctx.sampleRate); // One sample of silence
+        const source = this.ctx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(this.ctx.destination);
+        source.start();
     }
     // Adds a controller to our set of controllers.
     control(controller) {

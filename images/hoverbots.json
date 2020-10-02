@@ -1,0 +1,591 @@
+{
+  "frames": {
+    "RedBeam/4.png": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 441,
+        "h": 268
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 441,
+        "h": 268
+      },
+      "sourceSize": {
+        "w": 441,
+        "h": 268
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "OrangeBot/1.png": {
+      "frame": {
+        "x": 0,
+        "y": 268,
+        "w": 249,
+        "h": 320
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 249,
+        "h": 320
+      },
+      "sourceSize": {
+        "w": 249,
+        "h": 320
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "OrangeBot/3.png": {
+      "frame": {
+        "x": 249,
+        "y": 268,
+        "w": 241,
+        "h": 308
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 241,
+        "h": 308
+      },
+      "sourceSize": {
+        "w": 241,
+        "h": 308
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "BlueBot/bluebot1.png": {
+      "frame": {
+        "x": 490,
+        "y": 0,
+        "w": 187,
+        "h": 367
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 187,
+        "h": 367
+      },
+      "sourceSize": {
+        "w": 187,
+        "h": 367
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "BlueBot/bluebot4.png": {
+      "frame": {
+        "x": 249,
+        "y": 576,
+        "w": 238,
+        "h": 284
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 238,
+        "h": 284
+      },
+      "sourceSize": {
+        "w": 238,
+        "h": 284
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "OrangeBot/2.png": {
+      "frame": {
+        "x": 677,
+        "y": 0,
+        "w": 204,
+        "h": 331
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 204,
+        "h": 331
+      },
+      "sourceSize": {
+        "w": 204,
+        "h": 331
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "OrangeBot/4.png": {
+      "frame": {
+        "x": 677,
+        "y": 331,
+        "w": 207,
+        "h": 311
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 207,
+        "h": 311
+      },
+      "sourceSize": {
+        "w": 207,
+        "h": 311
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "BlueBot/bluebot3.png": {
+      "frame": {
+        "x": 490,
+        "y": 367,
+        "w": 184,
+        "h": 302
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 184,
+        "h": 302
+      },
+      "sourceSize": {
+        "w": 184,
+        "h": 302
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "BlueBot/bluebot2.png": {
+      "frame": {
+        "x": 674,
+        "y": 642,
+        "w": 150,
+        "h": 349
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 150,
+        "h": 349
+      },
+      "sourceSize": {
+        "w": 150,
+        "h": 349
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "RedBeam/3.png": {
+      "frame": {
+        "x": 0,
+        "y": 991,
+        "w": 410,
+        "h": 110
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 410,
+        "h": 110
+      },
+      "sourceSize": {
+        "w": 410,
+        "h": 110
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "RedBeam/2.png": {
+      "frame": {
+        "x": 0,
+        "y": 860,
+        "w": 414,
+        "h": 60
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 414,
+        "h": 60
+      },
+      "sourceSize": {
+        "w": 414,
+        "h": 60
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "BlueWave/3.png": {
+      "frame": {
+        "x": 0,
+        "y": 588,
+        "w": 132,
+        "h": 91
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 132,
+        "h": 91
+      },
+      "sourceSize": {
+        "w": 132,
+        "h": 91
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "YellowWave/3.png": {
+      "frame": {
+        "x": 0,
+        "y": 679,
+        "w": 132,
+        "h": 91
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 132,
+        "h": 91
+      },
+      "sourceSize": {
+        "w": 132,
+        "h": 91
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "OrangeWave/3.png": {
+      "frame": {
+        "x": 410,
+        "y": 920,
+        "w": 132,
+        "h": 91
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 132,
+        "h": 91
+      },
+      "sourceSize": {
+        "w": 132,
+        "h": 91
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "OrangeWave/1.png": {
+      "frame": {
+        "x": 132,
+        "y": 588,
+        "w": 116,
+        "h": 95
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 116,
+        "h": 95
+      },
+      "sourceSize": {
+        "w": 116,
+        "h": 95
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "BlueWave/1.png": {
+      "frame": {
+        "x": 132,
+        "y": 683,
+        "w": 116,
+        "h": 95
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 116,
+        "h": 95
+      },
+      "sourceSize": {
+        "w": 116,
+        "h": 95
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "YellowWave/1.png": {
+      "frame": {
+        "x": 487,
+        "y": 669,
+        "w": 116,
+        "h": 95
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 116,
+        "h": 95
+      },
+      "sourceSize": {
+        "w": 116,
+        "h": 95
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "OrangeWave/2.png": {
+      "frame": {
+        "x": 487,
+        "y": 764,
+        "w": 111,
+        "h": 95
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 111,
+        "h": 95
+      },
+      "sourceSize": {
+        "w": 111,
+        "h": 95
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "YellowWave/2.png": {
+      "frame": {
+        "x": 542,
+        "y": 859,
+        "w": 111,
+        "h": 95
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 111,
+        "h": 95
+      },
+      "sourceSize": {
+        "w": 111,
+        "h": 95
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "BlueWave/2.png": {
+      "frame": {
+        "x": 542,
+        "y": 954,
+        "w": 111,
+        "h": 95
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 111,
+        "h": 95
+      },
+      "sourceSize": {
+        "w": 111,
+        "h": 95
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "OrangeWave/4.png": {
+      "frame": {
+        "x": 0,
+        "y": 770,
+        "w": 123,
+        "h": 75
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 123,
+        "h": 75
+      },
+      "sourceSize": {
+        "w": 123,
+        "h": 75
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "BlueWave/4.png": {
+      "frame": {
+        "x": 123,
+        "y": 778,
+        "w": 123,
+        "h": 75
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 123,
+        "h": 75
+      },
+      "sourceSize": {
+        "w": 123,
+        "h": 75
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "YellowWave/4.png": {
+      "frame": {
+        "x": 410,
+        "y": 1011,
+        "w": 123,
+        "h": 75
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 123,
+        "h": 75
+      },
+      "sourceSize": {
+        "w": 123,
+        "h": 75
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "RedBeam/1.png": {
+      "frame": {
+        "x": 0,
+        "y": 920,
+        "w": 372,
+        "h": 11
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 372,
+        "h": 11
+      },
+      "sourceSize": {
+        "w": 372,
+        "h": 11
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.6",
+    "image": "hoverbots.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 884,
+      "h": 1101
+    },
+    "scale": 1
+  }
+}
