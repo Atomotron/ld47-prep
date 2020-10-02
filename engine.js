@@ -58,7 +58,7 @@ class Engine {
             const inverse_view = that.scene.view.inv();
             that.mouse_pos.eq(inverse_view.transform(new Vec(that.cm.mouse_x,that.cm.mouse_y)));
             if (last_t !== null) {
-                const dt = t-last_t;
+                const dt = (t-last_t)*0.001;
                 that.update(dt);
                 that.scene.update(dt);
                 that.scene.prepare(that.gl);
