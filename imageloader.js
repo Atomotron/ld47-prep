@@ -13,35 +13,27 @@ class ImageLoader {
         this.textures = new Map();
         this.count = images.size + sprites.size;
         this.countdown = this.count;
+        const that = this;
         for (const [name,path] of images) {
             const request = new XMLHttpRequest();
             request.open('GET',path,true);
             request.responseType = 'blob';
             request.onload = () => {
-                // Safari polyfill thanks to https://gist.github.com/nektro/84654b5183ddd1ccb7489607239c982d
-                const cIB = window.createImageBitmap || async function(blob) {
-                    return new Promise((resolve,reject) => {
-                        let img = document.createElement('img');
-                        img.addEventListener('load', function() {
-                            resolve(this);
-                        });
-                        img.src = URL.createObjectURL(blob);
-                    });
-                }
-                cIB(request.response).then(
-                    (imagebitmap) => {
-                        const texture = gl.createTexture();
-                        gl.bindTexture(gl.TEXTURE_2D, texture);
-                        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
-                        gl.texStorage2D(gl.TEXTURE_2D, 4, gl.RGBA8, imagebitmap.width, imagebitmap.height);
-                        gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, imagebitmap.width, imagebitmap.height, gl.RGBA, gl.UNSIGNED_BYTE, imagebitmap);
-                        gl.generateMipmap(gl.TEXTURE_2D);
-                        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-                        this.textures.set(name,texture);
-                        this.countdown -= 1;
-                        if (this.countdown === 0 &&callback !== null) callback(this);
-                    }
-                );
+                let img = new Image();
+                img.addEventListener('load', function() {
+                    const texture = gl.createTexture();
+                    gl.bindTexture(gl.TEXTURE_2D, texture);
+                    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+                    //gl.generateMipmap(gl.TEXTURE_2D);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+                    that.textures.set(name,texture);
+                    that.countdown -= 1;
+                    if (that.countdown === 0 &&callback !== null) callback(that);
+                });
+                img.src = URL.createObjectURL(request.response);
             };
             request.send();
         }

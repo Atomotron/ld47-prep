@@ -26,7 +26,7 @@ class CanvasManager {
         window.addEventListener('keyup',(e) => this.pressed.delete(e.code));
         
         // Create gl context
-        this.gl = this.canvas.getContext("webgl2",{
+        this.gl = this.canvas.getContext("webgl",{
          alpha: false,
          desynchronized: true,
          depth: false,
@@ -34,10 +34,23 @@ class CanvasManager {
          powerPreference: "high-performance",
         });
         if (this.gl === null) {
-            alert("Could not get WebGL2 context.");
+            alert("Could not get WebGL context.");
         } else {
             this.setupContext();
         }
+        this.ext_vao = this.gl.getExtension("OES_vertex_array_object");
+        if (!this.ext_vao) {
+            alert("Your browser does not support OES_vertex_array_object");
+        } else {
+            this.gl.ext_vao = this.ext_vao;
+        }
+        this.ext_instance = this.gl.getExtension("ANGLE_instanced_arrays");
+        if (!this.ext_instance) {
+            alert("Your browser does not support ANGLE_instanced_arrays");
+        } else {
+            this.gl.ext_instance = this.ext_instance;
+        }
+        
     }
     isPressed(keycode) {
         return this.pressed.has(keycode);

@@ -24,15 +24,15 @@ class ShaderCompiler {
         }
         // Set up sprite shader: a built-in special case.
         programs.set('sprite',["builtin-sprite-v","builtin-sprite-f"]);
-        vshaders.set("builtin-sprite-v",`#version 300 es
-            in vec2 vertex;
-            in vec3 model_x;
-            in vec3 model_y;
-            in vec3 model_z;
-            in vec3 uv_x;
-            in vec3 uv_y;
-            in vec3 uv_z;
-            out vec2 uv;
+        vshaders.set("builtin-sprite-v",`
+            attribute vec2 vertex;
+            attribute vec3 model_x;
+            attribute vec3 model_y;
+            attribute vec3 model_z;
+            attribute vec3 uv_x;
+            attribute vec3 uv_y;
+            attribute vec3 uv_z;
+            varying vec2 uv;
             uniform mat3 view;
 
             void main() {
@@ -41,16 +41,15 @@ class ShaderCompiler {
                 gl_Position = vec4(view_pos,0.5,1.0);
                 uv = (mat3(uv_x,uv_y,uv_z) * vec3(vertex,1.0)).xy;
             }`);
-        fshaders.set("builtin-sprite-f",`#version 300 es
+        fshaders.set("builtin-sprite-f",`
             precision highp float;
-            out vec4 color;
-            in vec2 uv;
+            varying vec2 uv;
 
             uniform sampler2D spritesheet;
 
             void main() {
-                vec4 tex = texture(spritesheet,uv);
-                color = tex;
+                vec4 tex = texture2D(spritesheet,uv);
+                gl_FragColor = tex;
             }`);    
         // Compile shaders
         this.compileShaders(gl,vshaders,gl.VERTEX_SHADER);

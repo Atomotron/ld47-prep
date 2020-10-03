@@ -91,17 +91,17 @@ class SimpleVAO {
         this.construct(gl);
     }
     construct(gl) {
-        this.vao = gl.createVertexArray();
-        gl.bindVertexArray(this.vao);
+        this.vao = gl.ext_vao.createVertexArrayOES();
+        gl.ext_vao.bindVertexArrayOES(this.vao);
         gl.bindBuffer(gl.ARRAY_BUFFER,this.square_vbo);
         gl.vertexAttribPointer(this.vertex_loc, 2, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(this.vertex_loc);
     }
     delete(gl) {
-        gl.deleteVertexArray(this.vao);
+        gl.ext_vao.deleteVertexArrayOES(this.vao);
     }
     draw(gl) {
-        gl.bindVertexArray(this.vao);
+        gl.ext_vao.bindVertexArrayOES(this.vao);
         gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
     }
 }
@@ -154,8 +154,8 @@ class DynamicVAO {
         this.construct(gl,size);
     }
     construct(gl,size) {
-        this.vao = gl.createVertexArray();
-        gl.bindVertexArray(this.vao);
+        this.vao = gl.ext_vao.createVertexArrayOES();
+        gl.ext_vao.bindVertexArrayOES(this.vao);
         gl.bindBuffer(gl.ARRAY_BUFFER,this.square_vbo);
         gl.vertexAttribPointer(this.vertex_loc, 2, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(this.vertex_loc);
@@ -170,27 +170,27 @@ class DynamicVAO {
                 gl.bindBuffer(gl.ARRAY_BUFFER,DVBO.vbo);
                 gl.vertexAttribPointer(loc, 1, gl.FLOAT, false, 0, 0);
                 gl.enableVertexAttribArray(loc);
-                gl.vertexAttribDivisor(loc, 1);
+                gl.ext_instance.vertexAttribDivisorANGLE(loc, 1);
             } else if (channel.type === "vec") {
                 const DVBO = new VecDVBO(gl,size,channel.dynamic);
                 this.DVBOs.set(name,DVBO);
                 gl.bindBuffer(gl.ARRAY_BUFFER,DVBO.vbo);
                 gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
                 gl.enableVertexAttribArray(loc);
-                gl.vertexAttribDivisor(loc, 1);
+                gl.ext_instance.vertexAttribDivisorANGLE(loc, 1);
             } else if (channel.type === "mat") {
                 const DVBO = new MatDVBO(gl,size,channel.dynamic);
                 this.DVBOs.set(name,DVBO);
                 gl.bindBuffer(gl.ARRAY_BUFFER,DVBO.vbo);
                 gl.vertexAttribPointer(loc[0], 3, gl.FLOAT, false, 4*9, 4*0);
                 gl.enableVertexAttribArray(loc[0]);
-                gl.vertexAttribDivisor(loc[0], 1);
+                gl.ext_instance.vertexAttribDivisorANGLE(loc[0], 1);
                 gl.vertexAttribPointer(loc[1], 3, gl.FLOAT, false, 4*9, 4*3);
                 gl.enableVertexAttribArray(loc[1]);
-                gl.vertexAttribDivisor(loc[1], 1);
+                gl.ext_instance.vertexAttribDivisorANGLE(loc[1], 1);
                 gl.vertexAttribPointer(loc[2], 3, gl.FLOAT, false, 4*9, 4*6);
                 gl.enableVertexAttribArray(loc[2]);
-                gl.vertexAttribDivisor(loc[2], 1);
+                gl.ext_instance.vertexAttribDivisorANGLE(loc[2], 1);
             }
         }
         this.size = size;
@@ -264,7 +264,7 @@ class DynamicVAO {
         this.refresh_requested = false;
     }
     draw(gl) {
-        gl.bindVertexArray(this.vao);
-        gl.drawArraysInstanced(gl.TRIANGLE_STRIP,0,4,this.head);
+        gl.ext_vao.bindVertexArrayOES(this.vao);
+        gl.ext_instance.drawArraysInstancedANGLE(gl.TRIANGLE_STRIP,0,4,this.head);
     }
 }
