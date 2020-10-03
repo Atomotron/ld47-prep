@@ -214,7 +214,7 @@ class DynamicVAO {
         for (const [name,dvbo] of this.DVBOs) {
             dvbo.delete(gl);
         }
-        gl.deleteVertexArray(this.vao);
+        gl.ext_vao.deleteVertexArrayOES(this.vao);
     }
     make_object(index) {
         const object = {};
